@@ -1,0 +1,117 @@
+{
+    "name": "PlayerUIInput",
+    "maps": [
+        {
+            "name": "ConsoleChat",
+            "id": "a37e8e3a-e3a9-4890-948b-33c79d383887",
+            "actions": [
+                {
+                    "name": "ToogleChat",
+                    "type": "Button",
+                    "id": "59c60c18-bf84-4ebf-a1ad-3b11b69ead59",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ToogleAutoTab",
+                    "type": "Button",
+                    "id": "d1a6ccec-7d67-4338-a6fc-859eed882402",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "AcceptAutoTab",
+                    "type": "Button",
+                    "id": "e016517d-39c9-4ef7-b49d-6d3e7c264715",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "AcceptInput",
+                    "type": "Button",
+                    "id": "e371021d-7934-4dd5-9e55-3e52a0b8691e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7869eca0-8e08-430a-b708-ded17b487cef",
+                    "path": "<Keyboard>/comma",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToogleChat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "24bdefe5-1a0d-43cc-8586-31dcd4d22470",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToogleAutoTab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84b06c61-1843-4033-bd23-e0dac0e59ad4",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AcceptAutoTab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "21ae4b08-ac5c-41d9-9461-3eb2150bae41",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AcceptInput",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Inventory",
+            "id": "c5cc5bd5-53a5-4694-a703-0aa67a10defb",
+            "actions": [
+                {
+                    "name": "ToogleView",
+                    "type": "Button",
+                    "id": "e81e788c-f528-408f-9665-6d691ec71878",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "eca0fdc2-ebad-4dc3-a71c-e22d97898679",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToogleView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

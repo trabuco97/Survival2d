@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70450cddc9983274ab38e830993c1f3a, type: 3}
+  m_Name: LegendaryArmor
+  m_EditorClassIdentifier: 
+  item_name: Destroyer
+  max_stack: 1
+  is_stackable: 0
+  type: 0
+  rarity: 0
+  ui_display: {fileID: 21300000, guid: 8582e97fa62334fbd8bd10c1052e27b8, type: 3}
+  base_damage_reduction: 90
+  base_armor_rating: 900
+  base_armor_rating_loss: 10
+  base_radiation_protection: 400
