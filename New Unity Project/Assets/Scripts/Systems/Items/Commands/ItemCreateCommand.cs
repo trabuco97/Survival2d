@@ -36,32 +36,12 @@ namespace Survival2D.Systems.Item.Command
             return false;
         }
 
-        protected override bool GetArgsGeneratedNames(string[] args, out string[] names_generated, out string word_searched)
+        protected override TabCompletitionParser GenerateCustomTabCompletition()
         {
-            names_generated = null;
-            word_searched = string.Empty;
+            var output = new TabCompletitionParser(CommandWord, 3);
+            output.TryAddTabGenerator(new ItemTypeNameGenerator(), 0);
 
-            var item_type_checker = new ItemTypeCommandChecker();
-            switch (args.Length)
-            {
-                case 0:
-                    word_searched = string.Empty;
-                    break;
-                case 1:
-                    word_searched = args[0];
-                    break;
-                default:
-                    return false;
-            }
-
-            if (item_type_checker.GetAutoTabNames(word_searched, out var names))
-            {
-                names_generated = names;
-                return true;
-            }
-
-
-            return false;
+            return output;
         }
     }
 

@@ -5,7 +5,7 @@ using ConsoleChat;
 
 namespace Survival2D.Systems.Statistics.Status.Command
 {
-    public class StatusNameCommandChecker : IAutoTabNamesGenerator
+    public class StatusNameGenerator : ITabNamesGenerator
     {
         protected override string[] GetNamesToCompare()
         {

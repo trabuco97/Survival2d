@@ -1,13 +1,10 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
-
+﻿
 using ConsoleChat;
 using Survival2D.Systems.Statistics;
 
 namespace Survival2D.Systems.HealthArmor.Command
 {
-    public class IncrementalTypeHealthCommandChecker : IAutoTabNamesGenerator
+    public class IncrementalTypeHealthNameGenerator : ITabNamesGenerator
     {
         protected override string[] GetNamesToCompare()
         {

@@ -491,9 +491,9 @@ GameObject:
   - component: {fileID: 3772350610679560963}
   - component: {fileID: 3772350610679560962}
   - component: {fileID: 3772350610679560961}
-  - component: {fileID: 3772350610679560965}
+  - component: {fileID: 1216364091273557452}
   m_Layer: 5
-  m_Name: UI_ConsoleChat
+  m_Name: UI_ChatConsole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -581,7 +581,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3772350610679560965
+--- !u!114 &1216364091273557452
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -590,10 +590,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3772350610679560960}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba686331456b8234ab60268e38843976, type: 3}
+  m_Script: {fileID: 11500000, guid: b733d25a3d4ad864c9caa8d1c8ab4aa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ui_console_canvas: {fileID: 3772350610679560963}
+  ui_chat_canvas: {fileID: 3772350610679560963}
   input_field: {fileID: 3772350610558918866}
   auto_tab: {fileID: 3772350610331208836}
   chat_box: {fileID: 3772350610640676772}

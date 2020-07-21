@@ -9,7 +9,7 @@ namespace ConsoleChat.Survival2D
 {
     public class ConsoleChatInputHandler : MonoBehaviour
     {
-        [SerializeField] private ChatConsoleDisplay consoleChat = null;
+        [SerializeField] private UI_ChatConsoleInputField consoleChat = null;
         private InputClientManager input_manager = null;
 
         private bool is_auto_tab_accepted = false;

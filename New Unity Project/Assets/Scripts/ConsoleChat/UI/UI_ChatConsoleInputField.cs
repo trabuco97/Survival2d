@@ -7,40 +7,37 @@ using TMPro;
 
 namespace ConsoleChat.UI
 {
-    public class ChatConsoleDisplay : MonoBehaviour
+    public class UI_ChatConsoleInputField : MonoBehaviour
     {
-        [SerializeField] private Canvas ui_console_canvas = null;
+        [SerializeField] private Canvas ui_chat_canvas = null;
         [SerializeField] private TMP_InputField input_field = null;
 
-        [SerializeField] private ChatAutoTab auto_tab = null;
-        [SerializeField] private ChatBox chat_box = null;
+        [SerializeField] private UI_TabCompletition auto_tab = null;
+        [SerializeField] private UI_ChatQueue chat_box = null;
 
-        private ConsoleDeveloperManager console;
-
-        private static ChatConsoleDisplay instance;
-        public static ChatConsoleDisplay Instance { get { return instance; } }
+        private Console console = null;
 
         public bool IsToogled { get; private set; }
         public bool IsAutoToogled { get; private set; }
 
         private void Awake()
         {
-            if (ui_console_canvas == null)
+#if UNITY_EDITOR
+            if (ui_chat_canvas == null)
             {
-                Debug.LogWarning($"{nameof(ui_console_canvas)} is not assigned to {typeof(ChatConsoleDisplay)} of {name}");
+                Debug.LogWarning($"{nameof(ui_chat_canvas)} is not assigned to {typeof(UI_ChatConsoleInputField)} of {name}");
             }
 
             if (input_field == null)
             {
-                Debug.LogWarning($"{nameof(input_field)} is not assigned to {typeof(ChatConsoleDisplay)} of {name}");
+                Debug.LogWarning($"{nameof(input_field)} is not assigned to {typeof(UI_ChatConsoleInputField)} of {name}");
             }
 
             if (chat_box == null)
             {
-                Debug.LogWarning($"{nameof(chat_box)} is not assigned to {typeof(ChatConsoleDisplay)} of {name}");
+                Debug.LogWarning($"{nameof(chat_box)} is not assigned to {typeof(UI_ChatConsoleInputField)} of {name}");
             }
-
-            instance = this;
+#endif 
 
             IsToogled = false;
             IsAutoToogled = false;
@@ -48,9 +45,9 @@ namespace ConsoleChat.UI
 
         private void Start()
         {
-            console = ConsoleDeveloperManager.instance;
+            console = ConsoleBehaviour.Instance.Console;
 
-            ui_console_canvas.gameObject.SetActive(false);
+            ui_chat_canvas.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -64,7 +61,7 @@ namespace ConsoleChat.UI
 
         public void ToogleDisplay()
         {
-            IsToogled = !ui_console_canvas.gameObject.activeSelf;
+            IsToogled = !ui_chat_canvas.gameObject.activeSelf;
 
             if (!IsToogled)
             {
@@ -72,7 +69,7 @@ namespace ConsoleChat.UI
                 IsAutoToogled = false;
             }
 
-            ui_console_canvas.gameObject.SetActive(IsToogled);
+            ui_chat_canvas.gameObject.SetActive(IsToogled);
 
             if (IsToogled)
             {
@@ -82,7 +79,7 @@ namespace ConsoleChat.UI
 
         public void ProcessInput(string input)
         {
-            // checks if the message isnt empty
+            // if the string is empty doesnt do anything
             if (!input.Any(x => char.IsLetter(x)))
             {
                 input_field.ActivateInputField();
@@ -110,36 +107,43 @@ namespace ConsoleChat.UI
         {
             if (!IsAutoToogled)
             {
+                bool result = false;
+                string[] tab_completition_names = null;
+                string name_to_replace = string.Empty;
 
-                // firs
-                // create instance of the tab checker, depending on the command or situation
-                // evaluate the input
-                // if is correct, then passes an array of string to auto complete
-                var command_checker = new CommandNamesGenerator();
-                if (command_checker.GetAutoTabNames(input_field.text, out var names, out var word))
+                // Generate the tab completition, if it can
+                // Checks first if there is a command
+                if (console.IsCommandValid(input_field.text))
                 {
-                    auto_tab.Inicialize(names, word);
-                }
-                else
-                {
-                    bool has_command = false;
-                    foreach (var command in console.Commands)
+                    console.ParseCommand(input_field.text, out var command_name, out var args);
+
+                    if (args.Length == 0)
                     {
-                        if (command.CheckAutoTabName(input_field.text, out var names_command, out var word_coomand))
+                        var command_generator = new CommandNamesGenerator(console);
+                        result = command_generator.GetTabNames(command_name, out var command_completition_names);
+                        tab_completition_names = command_completition_names;
+                        name_to_replace = command_name;
+                    }
+                    else
+                    {
+                        foreach (var command in console.GetCommandArray())
                         {
-                            if (auto_tab.Inicialize(names_command, word_coomand))
+                            result = command.TabCompletition.TryGetTabCompletitionNames(command_name, args, out var completition_names, out var arg_to_replace);
+                            if (result)
                             {
-                                has_command = true;
+                                tab_completition_names = completition_names;
+                                name_to_replace = arg_to_replace;
                                 break;
                             }
                         }
                     }
-
-                    if (!has_command) return;
-
                 }
 
+                // checks if no tab names found to replace
+                if (!result) return;
 
+
+                auto_tab.Inicialize(tab_completition_names, name_to_replace);
                 auto_tab.gameObject.SetActive(true);
                 IsAutoToogled = true;
                 input_field.DeactivateInputField();
@@ -147,7 +151,7 @@ namespace ConsoleChat.UI
 
                 // set the position of the tab in the input field
                 var pos = GetUpperCharPosition(auto_tab.WordSearched);
-                pos = ui_console_canvas.transform.InverseTransformPoint(pos);
+                pos = ui_chat_canvas.transform.InverseTransformPoint(pos);
                 auto_tab.transform.localPosition = pos;
             }
 

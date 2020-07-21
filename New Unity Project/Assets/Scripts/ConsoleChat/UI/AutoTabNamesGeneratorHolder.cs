@@ -9,7 +9,7 @@ namespace ConsoleChat.UI
 {
     public static class AutoTabNamesGeneratorHolder
     {
-        private static List<IAutoTabNamesGenerator> autoTabGenerator_container;
+        private static List<ITabNamesGenerator> autoTabGenerator_container;
         private static bool IsInicialized { get; set; } = false;
 
         private static void InicializeGenerators()
@@ -17,13 +17,13 @@ namespace ConsoleChat.UI
             if (IsInicialized) return;
 
             // get all the concrete inplementations of the auto names generators
-            var generator_types = Assembly.GetAssembly(typeof(IAutoTabNamesGenerator)).GetTypes().Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(IAutoTabNamesGenerator)));
+            var generator_types = Assembly.GetAssembly(typeof(ITabNamesGenerator)).GetTypes().Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(ITabNamesGenerator)));
 
-            autoTabGenerator_container = new List<IAutoTabNamesGenerator>();
+            autoTabGenerator_container = new List<ITabNamesGenerator>();
 
             foreach (var type in generator_types)
             {
-                var generator = Activator.CreateInstance(type) as IAutoTabNamesGenerator;
+                var generator = Activator.CreateInstance(type) as ITabNamesGenerator;
                 autoTabGenerator_container.Add(generator);
             }
 

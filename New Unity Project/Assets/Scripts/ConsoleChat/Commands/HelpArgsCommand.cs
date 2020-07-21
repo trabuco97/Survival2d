@@ -16,10 +16,10 @@ namespace ConsoleChat
         {
             if (args.Length != 1) return false;
 
-            var command = ConsoleDeveloperManager.instance.GetCommand(args[0]);
+            var command = ConsoleBehaviour.Instance.Console.GetCommand(args[0]);
             if (command != null)
             {
-                ChatBox.Instance.AddMessage($"Command {args[0]} accepts the args {command.CommandArgs}");
+                UI_ChatQueue.Instance.AddMessage($"Command {args[0]} accepts the args {command.CommandArgs}");
                 return true;
             }
 
@@ -27,26 +27,12 @@ namespace ConsoleChat
             return false;
         }
 
-        protected override bool GetArgsGeneratedNames(string[] args, out string[] names_generated, out string word_searched)
+        protected override TabCompletitionParser GenerateCustomTabCompletition()
         {
-            names_generated = null;
-            word_searched = null;
+            var output = new TabCompletitionParser(CommandWord, 1);
+            output.TryAddTabGenerator(new CommandNamesGenerator(ConsoleBehaviour.Instance.Console), 0);
 
-            switch (args.Length)
-            {
-                case 0:
-                    word_searched = string.Empty;
-                    break;
-                case 1:
-                    word_searched = args[0];
-                    break;
-                default:
-                    return false;
-            }
-
-            var command_generator = new CommandNamesGenerator();
-            names_generated = command_generator.ObtainCommandNameMatches(word_searched);
-            return true;
+            return output;
         }
     }
 }

@@ -7,7 +7,7 @@ using TMPro;
 
 namespace ConsoleChat.UI
 {
-    public class ChatBox : MonoBehaviour
+    public class UI_ChatQueue : MonoBehaviour
     {
         private class MessageInfo
         {
@@ -19,14 +19,14 @@ namespace ConsoleChat.UI
 
         private Queue<MessageInfo> message_queue = new Queue<MessageInfo>();
 
-        private static ChatBox instance;
-        public static ChatBox Instance { get { return instance; } }
+        private static UI_ChatQueue instance;
+        public static UI_ChatQueue Instance { get { return instance; } }
 
         private void Awake()
         {
             if (chat_display == null)
             {
-                Debug.LogWarning($"{nameof(chat_display)} is not assigned to {typeof(ChatBox)} of {name}");
+                Debug.LogWarning($"{nameof(chat_display)} is not assigned to {typeof(UI_ChatQueue)} of {name}");
             }
 
             instance = this;

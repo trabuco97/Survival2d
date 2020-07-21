@@ -5,7 +5,7 @@ using TMPro;
 
 namespace ConsoleChat.UI
 {
-    public class ChatAutoTab : MonoBehaviour
+    public class UI_TabCompletition : MonoBehaviour
     {
         [SerializeField] private GameObject autoTab_name_prefab = null;
         [SerializeField] private Transform name_container_display = null;

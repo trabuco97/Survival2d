@@ -5,7 +5,7 @@ using ConsoleChat;
 
 namespace Survival2D.Systems.Item.Command
 {
-    public class ItemTypeCommandChecker : IAutoTabNamesGenerator
+    public class ItemTypeNameGenerator : ITabNamesGenerator
     {
         protected override string[] GetNamesToCompare()
         {

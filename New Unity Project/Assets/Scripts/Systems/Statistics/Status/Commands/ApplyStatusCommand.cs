@@ -29,32 +29,12 @@ namespace Survival2D.Systems.Statistics.Status.Command
 
         }
 
-        protected override bool GetArgsGeneratedNames(string[] args, out string[] names_generated, out string word_searched)
+        protected override TabCompletitionParser GenerateCustomTabCompletition()
         {
-            names_generated = null;
-            word_searched = null;
+            var output = new TabCompletitionParser(CommandWord, 1);
+            output.TryAddTabGenerator(new StatusNameGenerator(), 0);
 
-            switch (args.Length)
-            {
-                case 0:
-                    word_searched = string.Empty;
-                    break;
-                case 1:
-                    word_searched = args[0];
-                    break;
-                default:
-                    return false;
-            }
-
-            var names_checker = new StatusNameCommandChecker();
-            if (names_checker.GetAutoTabNames(word_searched, out var names))
-            {
-                names_generated = names;
-                return true;
-            }
-
-
-            return false;
+            return output;
         }
     }
 }

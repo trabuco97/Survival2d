@@ -11,5 +11,7 @@ namespace Survival2D.Systems.Statistics.Status
         public List<StatModifierData> modifiers_data;
         public List<StatModifierData> incremental_modifiers_data;
         public float status_duration;
+
+        public Sprite ui_icon;
     }
 }
