@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine.Events;
 
 namespace Survival2D.Systems.Statistics.Status
 {
@@ -8,6 +8,13 @@ namespace Survival2D.Systems.Statistics.Status
     /// </summary>
     public interface ISystemWithStatus
     {
-        EntityStatus.EntityModifierLinkage LinkModifierToStat(StatModifierData statModifier_data);
+        StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
+        StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
     }
-}
+
+    public interface ISystemWithStatusBehaviour
+    {
+        UnityEvent OnSystemInicialized { get; }
+        ISystemWithStatus System { get; }
+    }
+}        

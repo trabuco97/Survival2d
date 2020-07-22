@@ -10,7 +10,7 @@ namespace Survival2D.Systems.Statistics
         protected readonly List<StatModifier> modifier_container = null;
 
         protected float last_calculated_value;
-        protected bool is_dirty = false;
+        protected bool is_dirty = true;
         protected float base_value;
 
 
@@ -74,7 +74,7 @@ namespace Survival2D.Systems.Statistics
                         final_value += (final_value * modifier.value/100);
                         break;
                     case StatModifierType.PercentMult:
-                        final_value *= modifier.value;
+                        final_value *= modifier.value / 100;
                         break;
                 }
             }
@@ -83,14 +83,14 @@ namespace Survival2D.Systems.Statistics
         }
 
         // Reorder the list to set modifier in this order : Flat, PercentAdd, PercentMult
-        protected static void ReorderMofifierList(List<StatModifier> modifier_container)
+        protected static void ReorderMofifierList<T>(List<T> modifier_container) where T : StatModifier
         {
-            modifier_container.Sort((StatModifier a, StatModifier b) =>
+            modifier_container.Sort((T a, T b) =>
             {
                 if (a.order < b.order)
-                    return -1;
-                else if (a.order > b.order)
                     return 1;
+                else if (a.order > b.order)
+                    return -1;
                 else
                     return 0;
             });

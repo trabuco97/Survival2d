@@ -9,7 +9,7 @@ namespace Survival2D.Systems.Statistics.Status
     {
         public string status_name;
         public List<StatModifierData> modifiers_data;
-        public List<StatModifierData> incremental_modifiers_data;
+        public List<IncrementalStatModifierData> incremental_modifiers_data;
         public float status_duration;
 
         public Sprite ui_icon;

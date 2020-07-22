@@ -9,7 +9,7 @@ namespace Survival2D.Systems.Statistics.Status.Command
     {
         protected override string[] GetNamesToCompare()
         {
-            return StatusDatabase.Instance.GetStatusNames();
+            return StatusDatabaseBehaviour.Instance.GetStatusNames();
         }
     }
 }

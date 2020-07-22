@@ -17,10 +17,10 @@ namespace Survival2D.Systems.Statistics.Status.Command
         {
             if (args.Length != 1) return false;
 
-            var status_system = PlayerManager.instance.player_object.GetComponentInChildren<StatusSystem>();
+            var status_system = PlayerManager.instance.player_object.GetComponentInChildren<StatusSystemBehaviour>();
             if (status_system != null)
             {
-                status_system.AddStatus(args[0]);
+                status_system.StatusSystem.AddStatus(args[0]);
                 return true;
             }
 

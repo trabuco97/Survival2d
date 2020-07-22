@@ -15,12 +15,12 @@ namespace Survival2D
     {
         public Canvas ui_inventory_canvas;
 
-        public InventoryDisplay inventory_ui;
-        public EquipmentDisplay equipment_ui;
+        public UI_Inventory inventory_ui;
+        public UI_Equipment equipment_ui;
         public PlayerGameplayInput inputActions;
 
-        public HealthArmorSystem healthArmorSystem;
-        public ItemPickupGenerator generator;
+        public HealthArmorSystemBehaviour healthArmorSystem;
+        public ItemPickGeneratorBehaviour generator;
 
         private void Awake()
         {

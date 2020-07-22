@@ -8,11 +8,11 @@ namespace Survival2D.Systems.HealthArmor.Command
     {
         protected override string[] GetNamesToCompare()
         {
-            int max_size = (int)IncrementalStat.TemporalType.MAX_TYPES;
+            int max_size = (int)IncrementalStat.AdditiveTemporaryType.MAX_TYPES;
             string[] output = new string[max_size];
             for (int i = 0; i < max_size; i++)
             {
-                output[i] = ((IncrementalStat.TemporalType)i).ToString();
+                output[i] = ((IncrementalStat.AdditiveTemporaryType)i).ToString();
             }
 
             return output;

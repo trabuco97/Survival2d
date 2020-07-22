@@ -22,8 +22,7 @@ namespace Survival2D.Systems.Item
 
         private void Awake()
         {
-
-
+#if UNITY_EDITOR
             if (box_collider == null)
             {
                 Debug.LogWarning($"{nameof(box_collider)} is not assigned to {nameof(ItemPickup)} of {name}");
@@ -33,6 +32,7 @@ namespace Survival2D.Systems.Item
             {
                 Debug.LogWarning($"{nameof(pickup_display)} is not assigned to {nameof(ItemPickup)} of {name}");
             }
+#endif
         }
 
         private void Start()

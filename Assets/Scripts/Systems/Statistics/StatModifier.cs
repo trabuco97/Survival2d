@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
 
 namespace Survival2D.Systems.Statistics
 {
@@ -10,12 +10,12 @@ namespace Survival2D.Systems.Statistics
         PercentMult,            // the value is multiplied by a percentage          100 as base value
     }
 
-    [System.Serializable]
+    [Serializable]
     public class StatModifier
     {
         public float value;
         public StatModifierType type;
-        [Range(-1, 20)] public int order;
+        [Range(-1, 20)] public int order = -1;
 
         public void Init()
         {

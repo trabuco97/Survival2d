@@ -20,15 +20,14 @@ namespace Survival2D.Systems.HealthArmor
     /// 1- total rating
     /// </summary>
     [Serializable]
-    public class LossArmorEvent : UnityEvent<float, float> { }
+    public class ArmorRatingModificiationEvent : UnityEvent<float, float> { }
 
 
     /// <summary>
     /// 0 - total health
-    /// 1 - gameobject that has 0 health
     /// </summary>
     [Serializable]
-    public class ZeroHealthEvent : UnityEvent<float, GameObject> { }
+    public class ZeroHealthEvent : UnityEvent<float> { }
 
 
     public class ArmorAdquiredEventInfo

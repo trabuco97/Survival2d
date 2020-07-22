@@ -19,7 +19,7 @@ namespace Survival2D.Systems.HealthArmor.Command
         {
             if (args.Length < 2) return false;
 
-            if (!Enum.TryParse(args[0], out IncrementalStat.TemporalType temporalType))
+            if (!Enum.TryParse(args[0], out IncrementalStat.AdditiveTemporaryType temporalType))
             {
                 return false;
             }
@@ -31,8 +31,8 @@ namespace Survival2D.Systems.HealthArmor.Command
 
             string[] status = args.Skip(2).ToArray();
 
-            var player_health = PlayerManager.instance.player_object.GetComponentInChildren<HealthArmorSystem>();
-            player_health.ModifyHealth(new HealthModificationInfo { health_delta_value = delta_health, temporal_delta_type = temporalType, status_applied = status });
+            var player_health = PlayerManager.instance.player_object.GetComponentInChildren<HealthArmorSystemBehaviour>();
+            player_health.HealthSystem.ModifyHealth(new HealthModificationInfo { health_delta_value = delta_health, temporal_delta_type = temporalType, status_applied = status });
             return true;
         }
 

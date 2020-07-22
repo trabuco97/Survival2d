@@ -1,24 +1,22 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using System.Collections.Generic;
 
 namespace Survival2D.Systems.Item.Equipment
 {
-    public class EquipmentSystem : MonoBehaviour, IItemSystem
+    public class EquipmentSystem : IItemSystem
     {
         private Dictionary<ItemType, EquipmentGroupType> equipment_groups = null;
-        
         public Dictionary<ItemType, EquipableSlotEvent> onEquipableReplacedEvents = new Dictionary<ItemType, EquipableSlotEvent>();
 
-        private void Awake()
+        public EquipmentSystem()
         {
             InicializeGroups();
         }
-  
+
         public bool EquipItem(ItemType type, ItemObject equipable, out ItemObject last_equipable, int slot_number = -1)
         {
             last_equipable = null;
-            if (!ItemSystemContainerChecker.ItMatches(type, SystemType.Equipment)) return false; 
+            if (!ItemSystemContainerChecker.ItMatches(type, SystemType.Equipment)) return false;
 
             equipment_groups.TryGetValue(type, out EquipmentGroupType group_type);
             if (group_type != null)
@@ -86,6 +84,18 @@ namespace Survival2D.Systems.Item.Equipment
             return null;
         }
 
+        public bool IsItemUsedInSystem(ItemObject item_toEvaluate)
+        {
+            bool evaluation = item_toEvaluate == null;
+            if (!evaluation)
+            {
+                var type = item_toEvaluate.type;
+                evaluation = type == ItemType.Suit;
+            }
+
+            return evaluation;
+        }
+
         // Default equipment types for every entity
         private void InicializeGroups()
         {
@@ -100,16 +110,7 @@ namespace Survival2D.Systems.Item.Equipment
             onEquipableReplacedEvents.Add(ItemType.Suit, new EquipableSlotEvent());
         }
 
-        public bool IsItemUsedInSystem(ItemObject item_toEvaluate)
-        {
-            bool evaluation = item_toEvaluate == null;
-            if (!evaluation)
-            {
-                var type = item_toEvaluate.type;
-                evaluation = type == ItemType.Suit;
-            }
 
-            return evaluation;
-        }
+
     }
 }

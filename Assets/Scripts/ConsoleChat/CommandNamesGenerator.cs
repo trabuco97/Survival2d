@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace ConsoleChat.UI
+namespace ConsoleChat
 {
     // This concrete implementation is used by the ui_logic itself to determine if a name of command has beend
     public class CommandNamesGenerator : ITabNamesGenerator

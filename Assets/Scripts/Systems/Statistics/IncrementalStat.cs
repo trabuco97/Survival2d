@@ -1,8 +1,13 @@
-﻿using UnityEngine.Events;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Survival2D.Systems.Statistics
 {
+    /// <summary>
+    /// For design purposes, the incremental modifiers are only applied to flat increment/decrements
+    /// All parameters uses percentages as base value 100
+    /// </summary>
+
     public class IncrementalStat : Stat
     {
         /// <summary>
@@ -10,116 +15,189 @@ namespace Survival2D.Systems.Statistics
         /// 
         /// Percentual : value% [0, -)
         /// </summary>
-        public enum TemporalType { Flat, Percentual, MAX_TYPES }
+        public enum AdditiveTemporaryType { Flat, PercentualBase, PercentualTemporary, MAX_TYPES }
+        public enum TemporaryType { Flat, Percentual }
 
-        protected readonly List<StatModifier> incremental_modifiers_container = null;
+        protected readonly List<IncrementalStatModifier> incremental_modifiers_container = null;
 
-        protected float temporal_value;
-        protected float last_temporal_calculated_value;
-        protected bool is_temporal_dirty = true;
+        protected float temporary_value;
+        protected float last_temporary_calculated_value;
+        protected bool is_temporary_dirty = true;
 
-        public float NoCalculatedActualValue { get { return temporal_value; } }
+        public float NoCalculatedActualValue { get { return temporary_value; } }
 
         public float ActualValue
         {
             get
             {
-                if (is_temporal_dirty)
+                if (is_temporary_dirty)
                 {
-                    last_temporal_calculated_value = CalculateFinalValue(temporal_value, modifier_container);
+                    last_temporary_calculated_value = CalculateFinalValue(temporary_value, modifier_container);
 
-                    is_temporal_dirty = false;
+                    is_temporary_dirty = false;
                 }
 
-                return last_temporal_calculated_value;
+                return last_temporary_calculated_value;
             }
         }
 
         public IncrementalStat(float base_value) : base(base_value)
         {
-            temporal_value = base_value;
+            temporary_value = base_value;
+            last_temporary_calculated_value = temporary_value;
 
-            incremental_modifiers_container = new List<StatModifier>();
+            incremental_modifiers_container = new List<IncrementalStatModifier>();
         }
 
         public override void ChangeBaseValue(float new_base_value)
         {
             base.ChangeBaseValue(new_base_value);
-            temporal_value = new_base_value;
-            is_temporal_dirty = true;
+            temporary_value = new_base_value;
+            is_temporary_dirty = true;
         }
 
         public override void AddModifier(StatModifier modifier)
         {
             base.AddModifier(modifier);
-            is_temporal_dirty = true;
+            is_temporary_dirty = true;
         }
 
         public override bool RemoveModifier(StatModifier modifier)
         {
             // workaround, maybe improve the remove modifer system
 
-            bool is_modifier_removed = false;
-            if (!base.RemoveModifier(modifier))
-                is_modifier_removed = incremental_modifiers_container.Remove(modifier);
+            //    bool is_modifier_removed = false;
+            //    if (!base.RemoveModifier(modifier))
+            //        is_modifier_removed = incremental_modifiers_container.Remove(modifier);
 
-            is_temporal_dirty = true;
-            return is_modifier_removed;
+            //    is_temporal_dirty = true;
+            //    return is_modifier_removed;
+
+            // this is better because now the logic differenciates between base value modifiers and temporary value modifiers
+            is_temporary_dirty = true;
+            return base.RemoveModifier(modifier);
         }
 
-        public void AddIncrementalModifier(StatModifier modifier)
+        public void AddIncrementalModifier(IncrementalStatModifier modifier)
         {
             modifier.Init();
             incremental_modifiers_container.Add(modifier);
             ReorderMofifierList(incremental_modifiers_container);
         }
 
-        public virtual void SetTemporalValue(float base_temporal, TemporalType type)
+        public bool RemoveIncrementalModifier(IncrementalStatModifier modifier)
         {
-            float final_base_temporal = base_temporal;
-            if (type == TemporalType.Percentual)
+            return incremental_modifiers_container.Remove(modifier);
+        }
+
+        // Only positive values
+        public virtual void SetTemporalValue(float base_temporal, TemporaryType type = TemporaryType.Flat)
+        {
+            if (type == TemporaryType.Percentual)
             {
-                final_base_temporal = final_base_temporal / 100 * base_value;
+                base_temporal = base_temporal / 100 * base_value;
             }
 
 
-            if (IsInStatBoundaries(base_temporal))
+            if (base_temporal > base_value)
             {
-                final_base_temporal = CalculateFinalValue(final_base_temporal, incremental_modifiers_container);
+                temporary_value = base_value;
             }
-
-
-            if (final_base_temporal > base_value)
+            else if (base_temporal < 0)
             {
-                temporal_value = base_value;
-            }
-            else if (final_base_temporal < 0)
-            {
-                temporal_value = 0;
+                temporary_value = 0;
             }
             else
             {
-                temporal_value = final_base_temporal;
+                temporary_value = base_temporal;
             }
 
-            is_temporal_dirty = true;
-
+            is_temporary_dirty = true;
         }
 
-        public virtual void AddToTemporalValue(float base_add_temporal, TemporalType type)
+        // This accept negative values
+        public virtual void AddToTemporary(float base_add_temporary, AdditiveTemporaryType type)
         {
-            float temporal_added = temporal_value;
-            if (type == TemporalType.Percentual)
+            float final_add_temporary = base_add_temporary;
+
+            // Get the base value to modify
+            if (type != AdditiveTemporaryType.Flat)
             {
-                temporal_added = temporal_added / base_value * 100;
+                if (type == AdditiveTemporaryType.PercentualBase)
+                {
+                    if (final_add_temporary > 100) final_add_temporary = 100;
+                    else if (final_add_temporary < -100) final_add_temporary = -100;
+
+                    final_add_temporary = final_add_temporary / 100 * base_value;
+                }
+                else if (type == AdditiveTemporaryType.PercentualTemporary)
+                {
+                    final_add_temporary = final_add_temporary / 100 * temporary_value;
+                }
+            }
+            else
+            {
+                IncrementalStatModifier.IncrementalType incremental_type;
+                if (final_add_temporary >= 0)
+                {
+                    incremental_type = IncrementalStatModifier.IncrementalType.Increase;
+                }
+                else
+                {
+                    incremental_type = IncrementalStatModifier.IncrementalType.Decrease;
+                }
+
+                final_add_temporary = CalculateFinalIncrementalValue(base_add_temporary, incremental_type, incremental_modifiers_container);
             }
 
-            SetTemporalValue(temporal_added + base_add_temporal, type);
+            SetTemporalValue(temporary_value + final_add_temporary);
         }
 
-        private bool IsInStatBoundaries(float value)
+        protected float CalculateFinalIncrementalValue(float delta_value, IncrementalStatModifier.IncrementalType type, List<IncrementalStatModifier> modifiers)
         {
-            return value <= base_value && value >= 0;
+            float final_delta_value = delta_value;
+
+            foreach (var modifier in modifiers)
+            {
+                if (modifier.incrementalType != type) continue;
+
+                switch (modifier.type)
+                {
+                    case StatModifierType.Flat:
+                        if (type == IncrementalStatModifier.IncrementalType.Increase)
+                        {
+                            final_delta_value += modifier.value;
+                        }
+                        else 
+                        {
+                            final_delta_value -= modifier.value;
+                        }
+                        break;
+                    case StatModifierType.PercentAdd:
+                        if (type == IncrementalStatModifier.IncrementalType.Increase)
+                        {
+                            final_delta_value += (final_delta_value * modifier.value / 100);
+                        }
+                        else
+                        {
+                            final_delta_value -= (final_delta_value * modifier.value / 100);
+                        }
+                        break;
+                    case StatModifierType.PercentMult:
+                        if (type == IncrementalStatModifier.IncrementalType.Increase)
+                        {
+                            final_delta_value *= modifier.value / 100;
+
+                        }
+                        else
+                        {
+                            final_delta_value *= -modifier.value / 100;
+                        }
+                        break;
+                }
+            }
+
+            return final_delta_value;
         }
     }
 }

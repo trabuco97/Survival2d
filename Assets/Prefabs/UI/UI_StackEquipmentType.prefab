@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4111044119378587618}
   - component: {fileID: 4111044119378587617}
-  - component: {fileID: 6336182314168709476}
+  - component: {fileID: 8836784607510258280}
   m_Layer: 5
   m_Name: UI_StackEquipmentType
   m_TagString: Untagged
@@ -62,7 +62,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
---- !u!114 &6336182314168709476
+--- !u!114 &8836784607510258280
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,9 +71,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4111044119378587619}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a02e00cad2604e345b05e61cbedac2e0, type: 3}
+  m_Script: {fileID: 11500000, guid: 77bee5cfb3ca8f64f97e02a097e4a011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ui_slot_background: {fileID: 0}
-  group_type: 0
-  slot_display_container: []
+  Type: 2

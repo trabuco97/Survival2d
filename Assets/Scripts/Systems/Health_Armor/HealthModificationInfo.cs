@@ -7,7 +7,7 @@ namespace Survival2D.Systems.HealthArmor
 {
     public class HealthModificationInfo
     {
-        public IncrementalStat.TemporalType temporal_delta_type;
+        public IncrementalStat.AdditiveTemporaryType temporal_delta_type;
         public float health_delta_value;
         public string[] status_applied;
     }

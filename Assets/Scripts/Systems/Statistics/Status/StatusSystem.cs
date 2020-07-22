@@ -1,44 +1,68 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace Survival2D.Systems.Statistics.Status
 {
-    public class StatusSystem : MonoBehaviour
+    public class StatusSystem
     {
-        private List<EntityStatus> status_applied_container = null;
+        public delegate ISystemWithStatus SystemWithStatusReciever(SystemType type);
 
-        private void Awake()
-        {
-            status_applied_container = new List<EntityStatus>();
-        }
 
-        private void Update()
+        private List<StatusObject> status_applied_container = null;
+        private SystemWithStatusReciever system_reciever;
+
+
+        public StatusSystem(SystemWithStatusReciever system_getter)
         {
-            UpdateStatusDuration();
+            status_applied_container = new List<StatusObject>();
+            system_reciever = system_getter;
         }
 
         public void AddStatus(string status_name)
         {
             if (!HasEntityStatus(status_name))
             {
-                if (StatusDatabase.Instance.TryGetStatus(status_name, out EntityStatus entity_status))
+                if (StatusDatabaseBehaviour.Instance.TryGetStatus(status_name, out StatusObject entity_status))
                 {
                     StatusData status_data = entity_status.status_data;
                     foreach (var modifier_data in status_data.modifiers_data)
                     {
-                        Type systemType = SystemToTypeConverter.GetSystemType(modifier_data.type);
-                        ISystemWithStatus system = transform.parent.GetComponentInChildren(systemType) as ISystemWithStatus;
+                        // this is workaround, improve if necessary
+                        // the system is obtain asumming the system are in their own gameobject, childs of the entity object
+
+                        var system = system_reciever(modifier_data.type);
 
                         if (system != null)
                         {
-                            EntityStatus.EntityModifierLinkage linkage = system.LinkModifierToStat(modifier_data);
+                            StatusLinkageToStat linkage = system.LinkModifierToStat(modifier_data);
                             entity_status.linkage_container.Add(linkage);
+
                         }
+#if UNITY_EDITOR
                         else
                         {
-                            Debug.LogWarning("dasda");
+                            Debug.LogError("error trying to get system to apply status");
                         }
+#endif
+                    }
+
+                    foreach (var incremental_modifier_data in status_data.incremental_modifiers_data)
+                    {
+                        var system = system_reciever(incremental_modifier_data.type);
+
+                        if (system != null)
+                        {
+                            StatusLinkageToIncrementalStat incremental_linkage = system.LinkIncrementalModifierToStat(incremental_modifier_data);
+                            entity_status.incremental_linkage_container.Add(incremental_linkage);
+
+                        }
+#if UNITY_EDITOR
+                        else
+                        {
+                            Debug.LogError("error trying to get system to apply status");
+                        }
+#endif
                     }
 
                     status_applied_container.Add(entity_status);
@@ -46,12 +70,12 @@ namespace Survival2D.Systems.Statistics.Status
             }
             else
             {
-                EntityStatus status = GetEntityStatus(status_name);
+                StatusObject status = GetEntityStatus(status_name);
                 status.actual_status_duration = status.status_data.status_duration;
             }
         }
 
-        private void UpdateStatusDuration()
+        public void UpdateStatusDuration()
         {
             for (int i = status_applied_container.Count - 1; i >= 0; i--)
             {
@@ -77,7 +101,7 @@ namespace Survival2D.Systems.Statistics.Status
             return false;
         }
 
-        private EntityStatus GetEntityStatus(string status_toFind)
+        private StatusObject GetEntityStatus(string status_toFind)
         {
             foreach (var entity_status in status_applied_container)
             {
@@ -90,7 +114,7 @@ namespace Survival2D.Systems.Statistics.Status
             return null;
         }
 
-        private void DeleteStatus(EntityStatus entity_status, int index)
+        private void DeleteStatus(StatusObject entity_status, int index)
         {
             foreach (var linkage in entity_status.linkage_container)
             {
@@ -100,6 +124,16 @@ namespace Survival2D.Systems.Statistics.Status
                 }
 
                 linkage.onModifierRemoval.Invoke();
+            }
+
+            foreach (var incremental_linkage in entity_status.incremental_linkage_container)
+            {
+                foreach (var incremental_stat in incremental_linkage.stats_linked)
+                {
+                    incremental_stat.RemoveIncrementalModifier(incremental_linkage.modifier);
+                }
+
+                incremental_linkage.onModifierRemoval.Invoke();
             }
 
             status_applied_container.RemoveAt(index);

@@ -9,7 +9,6 @@ namespace Survival2D.Systems.Item
     {
         public ItemType type = ItemType.MAX_TYPES;
         public int id = -1;
-
         public uint current_stack = 0;
 
         private IItemData item_data = null;
@@ -21,7 +20,7 @@ namespace Survival2D.Systems.Item
             {
                 if (item_data == null && IsInicialized)
                 {
-                    item_data = ItemDatabase.Instance.GetItemData(type, id);
+                    item_data = ItemDatabaseBehaviour.Instance.GetItemData(type, id);
                 }
 
                 return item_data;
@@ -31,9 +30,9 @@ namespace Survival2D.Systems.Item
         public virtual void Inicialize(ItemType type, int id) 
         {
             this.type = type;
-            this.id = id;
+            this.id = id;           
 
-            item_data = ItemDatabase.Instance.GetItemData(type, id);
+            item_data = ItemDatabaseBehaviour.Instance.GetItemData(type, id);
         }
 
         public bool HasSameData(ItemObject other)

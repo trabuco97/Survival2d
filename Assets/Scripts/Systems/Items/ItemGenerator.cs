@@ -7,7 +7,8 @@ namespace Survival2D.Systems.Item
 {
     public static class ItemGenerator
     {
-        public static bool GenerateItem(out ItemObject item_generated, ItemType type, int id, uint current_stack = 1)
+        // Post:    item_generated has the data already inicialized
+        public static bool GenerateItem(ItemType type, int id, out ItemObject item_generated, uint current_stack = 1)
         {
             switch (type)
             {

@@ -23,7 +23,7 @@ namespace Survival2D.Systems.Item.Command
                 uint.TryParse(args[2], out var current_stack))
             {
 
-                if (ItemGenerator.GenerateItem(out var item_object, item_type, id, current_stack))
+                if (ItemGenerator.GenerateItem(item_type, id, out var item_object, current_stack))
                 {
                     var inventory = PlayerManager.instance.player_object.GetComponentInChildren<InventorySystem>();
                     inventory.AddItemToAvailable(item_object);

@@ -1,10 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using System.Collections;
-
-namespace Survival2D.Systems.Item.Inventory
+﻿namespace Survival2D.Systems.Item.Inventory
 {
-    [System.Serializable]
     public class InventorySlot : IItemContainer
     {
         public InventorySystem inventory = null;

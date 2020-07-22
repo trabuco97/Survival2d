@@ -1,14 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-
-namespace Survival2D.Systems.Item.Inventory
+﻿namespace Survival2D.Systems.Item.Inventory
 {
-    [System.Serializable]
     public class InventorySpace 
     {
-#if UNITY_EDITOR
-        [SerializeField]
-#endif
         private InventorySlot[] inventory_slots_container = null;
 
         public bool IsEmpty { get { return CheckIfEmpty(); } }
