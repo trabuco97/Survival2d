@@ -4,13 +4,17 @@ using UnityEngine.InputSystem;
 
 namespace Survival2D.Input
 {
+    public enum CurrentActionMaps { Movement, ConsoleChat, Inventory }
+
     // Expand upon adding new inputs
-    public class ClientInput : MonoBehaviour
+    public class InputClient : MonoBehaviour
     {
+
         public PlayerGameplayInput GameplayInput { get; private set; }
         public PlayerUIInput UIInput { get; private set; }
 
-        private Dictionary<string, InputActionMap> maps_database = new Dictionary<string, InputActionMap>();
+
+        private Dictionary<CurrentActionMaps, InputActionMap> maps_database = new Dictionary<CurrentActionMaps, InputActionMap>();
 
         private void Awake()
         {
@@ -32,8 +36,9 @@ namespace Survival2D.Input
             UIInput.Disable();
         }
 
-        public void SetActionMapsState(bool state, params string[] action_maps_disabled)
+        public void SetActionMapsState(bool state, params CurrentActionMaps[] action_maps_disabled)
         {
+
             foreach (var action_map_name in action_maps_disabled)
             {
                 if (maps_database.TryGetValue(action_map_name, out var action_map))
@@ -56,12 +61,11 @@ namespace Survival2D.Input
             }
         }
 
-
         private void InicializeMap()
         {
-            maps_database.Add("movement", GameplayInput.Movement.Get());
-            maps_database.Add("consolechat", UIInput.ConsoleChat.Get());
-            maps_database.Add("inventory", UIInput.Inventory.Get());
+            maps_database.Add(CurrentActionMaps.Movement, GameplayInput.Movement.Get());
+            maps_database.Add(CurrentActionMaps.ConsoleChat, UIInput.ConsoleChat.Get());
+            maps_database.Add(CurrentActionMaps.Inventory, UIInput.Inventory.Get());
         }
     }
 }

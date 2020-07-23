@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Survival2D.Systems.Statistics;
 using ConsoleChat;
+using Survival2D.Entities.Player;
 
 namespace Survival2D.Systems.HealthArmor.Command
 {
@@ -31,7 +32,7 @@ namespace Survival2D.Systems.HealthArmor.Command
 
             string[] status = args.Skip(2).ToArray();
 
-            var player_health = PlayerManager.instance.player_object.GetComponentInChildren<HealthArmorSystemBehaviour>();
+            var player_health = PlayerManager.Instance.player_object.GetComponentInChildren<HealthArmorSystemBehaviour>();
             player_health.HealthSystem.ModifyHealth(new HealthModificationInfo { health_delta_value = delta_health, temporal_delta_type = temporalType, status_applied = status });
             return true;
         }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 using ConsoleChat;
 using Survival2D.Systems.Item.Inventory;
+using Survival2D.Entities.Player;
 
 namespace Survival2D.Systems.Item.Command
 {
@@ -25,7 +26,7 @@ namespace Survival2D.Systems.Item.Command
 
                 if (ItemGenerator.GenerateItem(item_type, id, out var item_object, current_stack))
                 {
-                    var inventory = PlayerManager.instance.player_object.GetComponentInChildren<InventorySystem>();
+                    var inventory = PlayerManager.Instance.player_object.GetComponentInChildren<InventorySystem>();
                     inventory.AddItemToAvailable(item_object);
 
                     return true;

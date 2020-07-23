@@ -27,7 +27,7 @@ namespace ConsoleChat.Input
         private void Start()
         {
             input_manager = InputClientManager.Instance;
-            SetupCallbacks();
+            input_manager.onClientInicialized.AddListener(SetupCallbacks);
         }
 
         private void Update()
@@ -44,7 +44,7 @@ namespace ConsoleChat.Input
             consoleChat.ToogleDisplay();
 
             bool other_inputs = !consoleChat.IsToogled;
-            input_manager.CurrentClient.SetActionMapsState(other_inputs, "movement", "inventory");
+            input_manager.CurrentClient.SetActionMapsState(other_inputs, CurrentActionMaps.Movement, CurrentActionMaps.Inventory);
         }
 
         public void PerformAutoTab()

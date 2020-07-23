@@ -12,6 +12,9 @@ namespace Survival2D.Systems.Statistics.Status
         private List<StatusObject> status_applied_container = null;
         private SystemWithStatusReciever system_reciever;
 
+        public StatusObjectEvent onStatusInicialized { get; } = new StatusObjectEvent();
+        public StatusObjectContainedEvent onStatusUpdate { get; } = new StatusObjectContainedEvent();
+        public StatusObjectContainedEvent onStatusRemoved { get; } = new StatusObjectContainedEvent();
 
         public StatusSystem(SystemWithStatusReciever system_getter)
         {
@@ -23,9 +26,9 @@ namespace Survival2D.Systems.Statistics.Status
         {
             if (!HasEntityStatus(status_name))
             {
-                if (StatusDatabaseBehaviour.Instance.TryGetStatus(status_name, out StatusObject entity_status))
+                if (StatusDatabaseBehaviour.Instance.TryGetStatus(status_name, out StatusObject status_object))
                 {
-                    StatusData status_data = entity_status.status_data;
+                    StatusData status_data = status_object.status_data;
                     foreach (var modifier_data in status_data.modifiers_data)
                     {
                         // this is workaround, improve if necessary
@@ -36,7 +39,7 @@ namespace Survival2D.Systems.Statistics.Status
                         if (system != null)
                         {
                             StatusLinkageToStat linkage = system.LinkModifierToStat(modifier_data);
-                            entity_status.linkage_container.Add(linkage);
+                            status_object.linkage_container.Add(linkage);
 
                         }
 #if UNITY_EDITOR
@@ -54,7 +57,7 @@ namespace Survival2D.Systems.Statistics.Status
                         if (system != null)
                         {
                             StatusLinkageToIncrementalStat incremental_linkage = system.LinkIncrementalModifierToStat(incremental_modifier_data);
-                            entity_status.incremental_linkage_container.Add(incremental_linkage);
+                            status_object.incremental_linkage_container.Add(incremental_linkage);
 
                         }
 #if UNITY_EDITOR
@@ -65,13 +68,16 @@ namespace Survival2D.Systems.Statistics.Status
 #endif
                     }
 
-                    status_applied_container.Add(entity_status);
+                    status_applied_container.Add(status_object);
+                    onStatusInicialized.Invoke(status_object);
                 }
             }
             else
             {
-                StatusObject status = GetEntityStatus(status_name);
-                status.actual_status_duration = status.status_data.status_duration;
+                StatusObject status_object = GetEntityStatus(status_name);
+                status_object.actual_status_duration = status_object.status_data.status_duration;
+
+                onStatusInicialized.Invoke(status_object);
             }
         }
 
@@ -79,11 +85,17 @@ namespace Survival2D.Systems.Statistics.Status
         {
             for (int i = status_applied_container.Count - 1; i >= 0; i--)
             {
-                var entity_status = status_applied_container[i];
-                entity_status.actual_status_duration -= Time.deltaTime;
-                if (entity_status.actual_status_duration <= 0)
+                var status_object = status_applied_container[i];
+                status_object.actual_status_duration -= Time.deltaTime;
+
+
+                if (status_object.actual_status_duration <= 0)
                 {
-                    DeleteStatus(entity_status, i);
+                    DeleteStatus(status_object, i);
+                }
+                else
+                {
+                    onStatusUpdate.Invoke(status_object, i);
                 }
             }
         }
@@ -114,28 +126,35 @@ namespace Survival2D.Systems.Statistics.Status
             return null;
         }
 
-        private void DeleteStatus(StatusObject entity_status, int index)
+        private void DeleteStatus(StatusObject status_object, int index)
         {
-            foreach (var linkage in entity_status.linkage_container)
+            if (status_object.linkage_container != null)
             {
-                foreach (var stat in linkage.stats_linked)
+                foreach (var linkage in status_object.linkage_container)
                 {
-                    stat.RemoveModifier(linkage.modifier);
-                }
+                    foreach (var stat in linkage.stats_linked)
+                    {
+                        stat.RemoveModifier(linkage.modifier);
+                    }
 
-                linkage.onModifierRemoval.Invoke();
+                    linkage.onModifierRemoval.Invoke();
+                }
             }
 
-            foreach (var incremental_linkage in entity_status.incremental_linkage_container)
+            if (status_object.incremental_linkage_container != null)
             {
-                foreach (var incremental_stat in incremental_linkage.stats_linked)
+                foreach (var incremental_linkage in status_object.incremental_linkage_container)
                 {
-                    incremental_stat.RemoveIncrementalModifier(incremental_linkage.modifier);
-                }
+                    foreach (var incremental_stat in incremental_linkage.stats_linked)
+                    {
+                        incremental_stat.RemoveIncrementalModifier(incremental_linkage.modifier);
+                    }
 
-                incremental_linkage.onModifierRemoval.Invoke();
+                    incremental_linkage.onModifierRemoval.Invoke();
+                }
             }
 
+            onStatusRemoved.Invoke(status_object, index);
             status_applied_container.RemoveAt(index);
         }
     }

@@ -15,7 +15,7 @@ namespace Survival2D.UI.Item
 #if UNITY_EDITOR
             if (ui_inventory_display == null)
             {
-                Debug.LogWarning($"{nameof(ui_inventory_display)} is not assigned to {typeof(UI_InventoryInputBehaviour)} of {name}");
+                Debug.LogWarning($"{nameof(ui_inventory_display)} is not assigned to {typeof(UI_InventoryInputBehaviour)} of {gameObject.GetFullName()}");
             }
 #endif
         }
@@ -23,14 +23,14 @@ namespace Survival2D.UI.Item
         private void Start()
         {
             input_manager = InputClientManager.Instance;
-            SetupCallbacks();
+            input_manager.onClientInicialized.AddListener(SetupCallbacks);
         }
 
         public void PerformToogleInventory()
         {
             ui_inventory_display.ToogleDisplay();
             bool new_action_map_state = !ui_inventory_display.IsDisplaying;
-            input_manager.CurrentClient.SetActionMapsState(new_action_map_state, "consolechat");
+            input_manager.CurrentClient.SetActionMapsState(new_action_map_state, CurrentActionMaps.ConsoleChat);
         }
 
         private void SetupCallbacks()

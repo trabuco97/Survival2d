@@ -1,29 +1,26 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using UnityEngine.Events;
+
+using Survival2D.Entities.Player;
 
 namespace Survival2D.Input
 {
-    public class InputClientManager : ISingletonBehaviour<InputClientManager>
+    public class InputClientManager : IPlayerBehaviourListener<InputClient>
     {
-        private int current_selected = 0;
-        private ClientInput[] scene_client_input = null;
+        public InputClient CurrentClient { get { return Behaviour; } }
+        public UnityEvent onClientInicialized { get; private set; } = new UnityEvent();
 
-        public ClientInput CurrentClient { get { return scene_client_input[current_selected]; } }
+        public static InputClientManager Instance { get; private set; } = null;
 
         protected override void Awake()
         {
+            Instance = this;
             base.Awake();
-            GetSceneInputs();
-        }
-        private void GetSceneInputs()
-        {
-            scene_client_input = FindObjectsOfType<ClientInput>();
         }
 
 
-        protected override void SetInstace()
+        protected override void InicializeBehaviour()
         {
-            instance = this;
+            onClientInicialized.Invoke();
         }
     }
 }

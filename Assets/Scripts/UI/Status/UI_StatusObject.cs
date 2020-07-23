@@ -12,10 +12,6 @@ namespace Survival2D.UI.Status
         [SerializeField] private Image status_icon_display = null;
         [SerializeField] private TMP_Text status_time_display = null;
 
-        private UI_StatusSystem status_system_display = null;
-        private StatusObject status_displaying = null;
-
-
         private void Awake()
         {
 #if UNITY_EDITOR
@@ -31,28 +27,20 @@ namespace Survival2D.UI.Status
 #endif
         }
 
-        private void Update()
+        public void Inicialize(StatusObject status_object)
         {
-            UpdateStatusDisplay();
-        }
-
-        public void Inicialize(UI_StatusSystem status_system_display, StatusObject status)
-        {
-            this.status_system_display = status_system_display;
-            this.status_displaying = status;
-
-            status_icon_display.sprite = status.status_data.ui_icon;
-            UpdateStatusDisplay();
+            status_icon_display.sprite = status_object.status_data.ui_icon;
+            UpdateStatusDisplay(status_object);
         }
 
 
-        private void UpdateStatusDisplay()
+        public void UpdateStatusDisplay(StatusObject status_object)
         {
-            var time_left = status_displaying.actual_status_duration;
+            var time_left = status_object.actual_status_duration;
             if (time_left >= 0)
             {
                 var seconds_left = time_left % 60;
-                status_time_display.text = $"{seconds_left} s";
+                status_time_display.text = $"{seconds_left.ToString("0.0")} s";
             }
             else
             {

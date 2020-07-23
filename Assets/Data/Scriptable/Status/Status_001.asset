@@ -16,10 +16,10 @@ MonoBehaviour:
   modifiers_data:
   - type: 1
     stat_layerMask: 1
-    is_incremental_modifier: 0
     modifier:
       value: 20
       type: 0
-      order: -1
+      order: 0
   incremental_modifiers_data: []
-  status_duration: 1
+  status_duration: 10
+  ui_icon: {fileID: 21300000, guid: f240dfd4814d34d55a9b033f3c9d8a60, type: 3}
