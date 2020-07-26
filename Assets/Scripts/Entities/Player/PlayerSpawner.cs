@@ -40,7 +40,7 @@ namespace Survival2D.Entities.Player
             var player = instance.GetComponent<EntityBehaviour>();
             if (player != null)
             {
-                player.onDespaawn.AddListener(DestroyPlayer);
+                player.onDespawn.AddListener(DestroyPlayer);
             }
 #if UNITY_EDITOR
             else

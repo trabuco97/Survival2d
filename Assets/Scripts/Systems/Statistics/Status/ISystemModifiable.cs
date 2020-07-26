@@ -1,4 +1,5 @@
-﻿using UnityEngine.Events;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace Survival2D.Systems.Statistics.Status
 {
@@ -16,5 +17,14 @@ namespace Survival2D.Systems.Statistics.Status
     {
         UnityEvent OnSystemInicialized { get; }
         ISystemWithStatus System { get; }
+    }
+
+    public abstract class ISystemBehaviourWithStatus : MonoBehaviour, ISystemWithStatusBehaviour, ISystemWithStatus
+    {
+        public abstract UnityEvent OnSystemInicialized { get; }
+        public abstract ISystemWithStatus System { get; }
+
+        public abstract StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
+        public abstract StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
     }
 }        

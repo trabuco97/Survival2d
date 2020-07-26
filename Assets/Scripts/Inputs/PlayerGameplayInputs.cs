@@ -17,12 +17,12 @@ namespace Survival2D.Input
     ""name"": ""PlayerGameplayInput"",
     ""maps"": [
         {
-            ""name"": ""Movement"",
+            ""name"": ""NoSwimmable_Movement"",
             ""id"": ""9f516d21-13c5-442b-b5bd-c7a95fbc0b73"",
             ""actions"": [
                 {
-                    ""name"": ""Move"",
-                    ""type"": ""PassThrough"",
+                    ""name"": ""Horizontal_Movement"",
+                    ""type"": ""Value"",
                     ""id"": ""832d3940-c37e-4257-a19e-dd904d051c7c"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
@@ -45,7 +45,7 @@ namespace Survival2D.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""Horizontal_Movement"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -56,7 +56,7 @@ namespace Survival2D.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Move"",
+                    ""action"": ""Horizontal_Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -67,7 +67,7 @@ namespace Survival2D.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Move"",
+                    ""action"": ""Horizontal_Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -148,10 +148,10 @@ namespace Survival2D.Input
         }
     ]
 }");
-            // Movement
-            m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
-            m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
-            m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+            // NoSwimmable_Movement
+            m_NoSwimmable_Movement = asset.FindActionMap("NoSwimmable_Movement", throwIfNotFound: true);
+            m_NoSwimmable_Movement_Horizontal_Movement = m_NoSwimmable_Movement.FindAction("Horizontal_Movement", throwIfNotFound: true);
+            m_NoSwimmable_Movement_Jump = m_NoSwimmable_Movement.FindAction("Jump", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -198,46 +198,46 @@ namespace Survival2D.Input
             asset.Disable();
         }
 
-        // Movement
-        private readonly InputActionMap m_Movement;
-        private IMovementActions m_MovementActionsCallbackInterface;
-        private readonly InputAction m_Movement_Move;
-        private readonly InputAction m_Movement_Jump;
-        public struct MovementActions
+        // NoSwimmable_Movement
+        private readonly InputActionMap m_NoSwimmable_Movement;
+        private INoSwimmable_MovementActions m_NoSwimmable_MovementActionsCallbackInterface;
+        private readonly InputAction m_NoSwimmable_Movement_Horizontal_Movement;
+        private readonly InputAction m_NoSwimmable_Movement_Jump;
+        public struct NoSwimmable_MovementActions
         {
             private @PlayerGameplayInput m_Wrapper;
-            public MovementActions(@PlayerGameplayInput wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Move => m_Wrapper.m_Movement_Move;
-            public InputAction @Jump => m_Wrapper.m_Movement_Jump;
-            public InputActionMap Get() { return m_Wrapper.m_Movement; }
+            public NoSwimmable_MovementActions(@PlayerGameplayInput wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Horizontal_Movement => m_Wrapper.m_NoSwimmable_Movement_Horizontal_Movement;
+            public InputAction @Jump => m_Wrapper.m_NoSwimmable_Movement_Jump;
+            public InputActionMap Get() { return m_Wrapper.m_NoSwimmable_Movement; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
             public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(MovementActions set) { return set.Get(); }
-            public void SetCallbacks(IMovementActions instance)
+            public static implicit operator InputActionMap(NoSwimmable_MovementActions set) { return set.Get(); }
+            public void SetCallbacks(INoSwimmable_MovementActions instance)
             {
-                if (m_Wrapper.m_MovementActionsCallbackInterface != null)
+                if (m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface != null)
                 {
-                    @Move.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Move.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Move.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnMove;
-                    @Jump.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnJump;
-                    @Jump.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnJump;
-                    @Jump.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnJump;
+                    @Horizontal_Movement.started -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnHorizontal_Movement;
+                    @Horizontal_Movement.performed -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnHorizontal_Movement;
+                    @Horizontal_Movement.canceled -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnHorizontal_Movement;
+                    @Jump.started -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnJump;
+                    @Jump.performed -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnJump;
+                    @Jump.canceled -= m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface.OnJump;
                 }
-                m_Wrapper.m_MovementActionsCallbackInterface = instance;
+                m_Wrapper.m_NoSwimmable_MovementActionsCallbackInterface = instance;
                 if (instance != null)
                 {
-                    @Move.started += instance.OnMove;
-                    @Move.performed += instance.OnMove;
-                    @Move.canceled += instance.OnMove;
+                    @Horizontal_Movement.started += instance.OnHorizontal_Movement;
+                    @Horizontal_Movement.performed += instance.OnHorizontal_Movement;
+                    @Horizontal_Movement.canceled += instance.OnHorizontal_Movement;
                     @Jump.started += instance.OnJump;
                     @Jump.performed += instance.OnJump;
                     @Jump.canceled += instance.OnJump;
                 }
             }
         }
-        public MovementActions @Movement => new MovementActions(this);
+        public NoSwimmable_MovementActions @NoSwimmable_Movement => new NoSwimmable_MovementActions(this);
         private int m_KeyboardMouseSchemeIndex = -1;
         public InputControlScheme KeyboardMouseScheme
         {
@@ -283,9 +283,9 @@ namespace Survival2D.Input
                 return asset.controlSchemes[m_XRSchemeIndex];
             }
         }
-        public interface IMovementActions
+        public interface INoSwimmable_MovementActions
         {
-            void OnMove(InputAction.CallbackContext context);
+            void OnHorizontal_Movement(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
         }
     }

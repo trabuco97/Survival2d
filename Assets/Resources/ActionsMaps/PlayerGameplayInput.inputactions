@@ -2,12 +2,12 @@
     "name": "PlayerGameplayInput",
     "maps": [
         {
-            "name": "Movement",
+            "name": "NoSwimmable_Movement",
             "id": "9f516d21-13c5-442b-b5bd-c7a95fbc0b73",
             "actions": [
                 {
-                    "name": "Move",
-                    "type": "PassThrough",
+                    "name": "Horizontal_Movement",
+                    "type": "Value",
                     "id": "832d3940-c37e-4257-a19e-dd904d051c7c",
                     "expectedControlType": "Axis",
                     "processors": "",
@@ -30,7 +30,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Horizontal_Movement",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -41,7 +41,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Move",
+                    "action": "Horizontal_Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -52,7 +52,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Move",
+                    "action": "Horizontal_Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },

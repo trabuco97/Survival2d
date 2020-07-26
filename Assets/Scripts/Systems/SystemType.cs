@@ -3,15 +3,17 @@
 using Survival2D.Systems.Item.Inventory;
 using Survival2D.Systems.Item.Equipment;
 using Survival2D.Systems.HealthArmor;
+using Survival2D.Physics.Movement;
 
 namespace Survival2D.Systems
 {
     public enum SystemType
     {
-        None        = 0,
-        Health      = 1 << 0, 
-        Inventory   = 1 << 1,
-        Equipment   = 1 << 2
+        None        ,
+        Health      ,
+        Inventory   ,
+        Equipment   ,
+        Movement    ,
     }
 
     // TODO
@@ -24,6 +26,8 @@ namespace Survival2D.Systems
             {
                 case SystemType.Health:
                     return typeof(HealthArmorSystemBehaviour);
+                case SystemType.Movement:
+                    return typeof(MovementSystemControllerBehaviour);
                 case SystemType.Inventory:
                 case SystemType.Equipment:
                 default:
@@ -36,6 +40,10 @@ namespace Survival2D.Systems
             if (type == typeof(HealthArmorSystem))
             {
                 return SystemType.Health;
+            }
+            else if (type == typeof(MovementSystemControllerBehaviour))
+            {
+                return SystemType.Movement;
             }
             else
             {

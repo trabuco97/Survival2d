@@ -41,7 +41,8 @@ namespace Survival2D.Systems.Statistics
             }
         }
 
-        public IncrementalStat(float base_value) : base(base_value)
+
+        public IncrementalStat(float base_value = 0) : base(base_value)
         {
             temporary_value = base_value;
             last_temporary_calculated_value = temporary_value;

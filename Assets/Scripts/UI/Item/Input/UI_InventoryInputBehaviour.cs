@@ -23,7 +23,10 @@ namespace Survival2D.UI.Item
         private void Start()
         {
             input_manager = InputClientManager.Instance;
-            input_manager.onClientInicialized.AddListener(SetupCallbacks);
+            if (input_manager.IsClientInicialized)
+            {
+                SetupCallbacks();
+            }
         }
 
         public void PerformToogleInventory()

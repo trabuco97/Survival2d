@@ -28,10 +28,7 @@ namespace Survival2D.Entities.Player
 #endif
 
             Instance = this;
-        }
 
-        private void Start()
-        {
             player_object = spawner_behaviour.SpawnPlayer();
             binder_behaviour.BindPlayerToScene(player_object);
         }

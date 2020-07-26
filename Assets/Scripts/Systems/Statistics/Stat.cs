@@ -28,7 +28,7 @@ namespace Survival2D.Systems.Statistics
             } 
         }
 
-        public Stat(float base_value)
+        public Stat(float base_value = 0)
         {
             this.base_value = base_value;
             last_calculated_value = base_value;

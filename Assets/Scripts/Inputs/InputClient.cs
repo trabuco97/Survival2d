@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Survival2D.Input
 {
-    public enum CurrentActionMaps { Movement, ConsoleChat, Inventory }
+    public enum CurrentActionMaps { No_SwimmableMovement, ConsoleChat, Inventory }
 
     // Expand upon adding new inputs
     public class InputClient : MonoBehaviour
@@ -63,7 +63,7 @@ namespace Survival2D.Input
 
         private void InicializeMap()
         {
-            maps_database.Add(CurrentActionMaps.Movement, GameplayInput.Movement.Get());
+            maps_database.Add(CurrentActionMaps.No_SwimmableMovement, GameplayInput.NoSwimmable_Movement.Get());
             maps_database.Add(CurrentActionMaps.ConsoleChat, UIInput.ConsoleChat.Get());
             maps_database.Add(CurrentActionMaps.Inventory, UIInput.Inventory.Get());
         }
