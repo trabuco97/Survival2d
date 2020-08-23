@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System;
+using UnityEngine;
 
 
 namespace Survival2D.Systems.Statistics.Status
@@ -8,8 +8,10 @@ namespace Survival2D.Systems.Statistics.Status
     {
         [SerializeField] private SystemStatusHolderBehaviour system_status_holder = null;
 
-        public UnityEvent onSystemInicialized { get; } = new UnityEvent();
         public StatusSystem StatusSystem { get; private set; } = null;
+
+        public event EventHandler OnSystemInitialized;
+
 
         private void Awake()
         {
@@ -20,7 +22,8 @@ namespace Survival2D.Systems.Statistics.Status
             }
 #endif
 
-            system_status_holder.onSystemStatusInicialized.AddListener(InicializeSystem);
+            // Inicialize the system
+            system_status_holder.OnSystemStatusInicialized += InicializeSystem;
         }
 
         private void Update()
@@ -28,10 +31,15 @@ namespace Survival2D.Systems.Statistics.Status
             StatusSystem.UpdateStatusDuration();
         }
 
-        private void InicializeSystem()
+        private void OnDestroy()
+        {
+            system_status_holder.OnSystemStatusInicialized -= InicializeSystem;
+        }
+
+        private void InicializeSystem(object e, EventArgs args)
         {
             StatusSystem = new StatusSystem(GetSystem);
-            onSystemInicialized.Invoke();
+            OnSystemInitialized.Invoke(this, EventArgs.Empty);
         }
 
         // Used by the status system

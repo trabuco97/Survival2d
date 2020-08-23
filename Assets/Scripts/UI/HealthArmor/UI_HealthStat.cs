@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
@@ -13,6 +11,8 @@ namespace Survival2D.UI.HealthArmor
     {
         [SerializeField] private Slider bar_display = null;
         [SerializeField] private TMP_Text text_display = null;
+
+        private HealthArmorSystem current;
 
         private void Awake()
         {
@@ -29,6 +29,10 @@ namespace Survival2D.UI.HealthArmor
 #endif
         }
 
+        private void OnDestroy()
+        {
+            if (current != null) TerminateCallbacks(current);
+        }
 
         public void SetHealthDisplay(float actual_health, float total_health)
         {
@@ -38,18 +42,30 @@ namespace Survival2D.UI.HealthArmor
             text_display.text = actual_health.ToString().PadLeft(3, '0') + "/" + total_health.ToString().PadLeft(3, '0'); 
         }
 
-        public void InicializeDisplay(HealthArmorSystem health_system)
+        public void InitializeDisplay(HealthArmorSystem health_system)
         {
             bar_display.minValue = 0;
 
-            health_system.onHealthModified.AddListener(SetHealthDisplay);
-            health_system.onZeroHealth.AddListener(delegate (float total_health)
-            {
-                SetHealthDisplay(0, total_health);
-            });
+            if (current != null) TerminateCallbacks(current);
+            current = health_system;
+
+            health_system.OnHealthModified += CallbackHealthModified;
+            health_system.OnZeroHealth += CallbackHealthModified;
 
 
             SetHealthDisplay(health_system.Health.ActualValue, health_system.Health.Value);
         }
+
+        private void TerminateCallbacks(HealthArmorSystem health_system)
+        {
+            health_system.OnHealthModified -= CallbackHealthModified;
+            health_system.OnZeroHealth -= CallbackHealthModified;
+        }
+
+        private void CallbackHealthModified(HealthEventArgs args)
+        {
+            SetHealthDisplay(args.ActualHealth, args.TotalHealth);
+        }
+
     }
 }

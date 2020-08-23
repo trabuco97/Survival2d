@@ -26,8 +26,8 @@ namespace Survival2D.Systems.Item.Command
 
                 if (ItemGenerator.GenerateItem(item_type, id, out var item_object, current_stack))
                 {
-                    var inventory = PlayerManager.Instance.player_object.GetComponentInChildren<InventorySystem>();
-                    inventory.AddItemToAvailable(item_object);
+                    var inventory_behaviour = PlayerManager.Instance.PlayerObject.GetComponentInChildren<InventorySystemBehaviour>();
+                    inventory_behaviour.Inventory.AddItemToAvailable(item_object);
 
                     return true;
                 }

@@ -5,11 +5,12 @@ namespace Survival2D.Entities
 {
     public class EntityBehaviour : MonoBehaviour
     {
-        public EntityEvent onDespawn { get; } = new EntityEvent();
+        public event EntityMethods OnDespawn;
+
 
         private void OnDisable()
         {
-            onDespawn.Invoke(this.gameObject);
+            OnDespawn?.Invoke(new EntityEventArgs(this.gameObject));
         }
     }
 }

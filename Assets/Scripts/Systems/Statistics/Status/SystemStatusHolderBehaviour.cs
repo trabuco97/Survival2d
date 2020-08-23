@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Survival2D.Systems.Statistics.Status
 {
@@ -9,24 +9,21 @@ namespace Survival2D.Systems.Statistics.Status
     public class SystemStatusHolderBehaviour : MonoBehaviour
     {
         private ISystemWithStatusBehaviour[] system_behaviour_container = null;
-        private Dictionary<SystemType, ISystemWithStatus> systemWithStatus_database = null;
+        private Dictionary<SystemType, ISystemWithStatus> systemWithStatus_database = new Dictionary<SystemType, ISystemWithStatus>();
 
-        public UnityEvent onSystemStatusInicialized { get; } = new UnityEvent();
+        public event EventHandler OnSystemStatusInicialized;
 
         private void Awake()
         {
             system_behaviour_container = transform.parent.GetComponentsInChildren<ISystemWithStatusBehaviour>();
-            systemWithStatus_database = new Dictionary<SystemType, ISystemWithStatus>();
-        }
 
-        public void Start()
-        {
             // add callback when the systems are inicialized
             foreach (var system_behaviour in system_behaviour_container)
             {
-                system_behaviour.OnSystemInicialized.AddListener(delegate
+                EventHandler handler = null;
+                handler = delegate 
                 {
-                    var type = SystemTypeConverter.GetSystemFromType(system_behaviour.System.GetType());
+                    var type = system_behaviour.SystemType;
                     if (type != SystemType.None)
                     {
                         systemWithStatus_database.Add(type, system_behaviour.System);
@@ -37,10 +34,19 @@ namespace Survival2D.Systems.Statistics.Status
                         Debug.LogError("error trying to get type from SystemTypeConverter");
                     }
 #endif
-                });
-            }
 
-            onSystemStatusInicialized.Invoke();
+                    system_behaviour.OnSystemInicialized -= handler;
+                };
+
+
+
+                system_behaviour.OnSystemInicialized += handler;
+            }
+        }
+
+        public void Start()
+        {
+            OnSystemStatusInicialized.Invoke(this, new EventArgs());
         }
 
         public bool TryGetSystem(SystemType type, out ISystemWithStatus systemWithStatus)

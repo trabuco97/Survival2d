@@ -10,7 +10,7 @@ namespace Survival2D.UI.Item.Equipment
     {
         [SerializeField] private GameObject slot_display_prefab = null;
         [SerializeField] private CanvasGroup ui_canvas_group = null;
-        [SerializeField] private UI_ItemDrag item_drag_display = null;
+        [SerializeField] private UI_ItemDragImage item_drag_display = null;
 
         public List<UI_EquipmentGroup> equipment_group_container = new List<UI_EquipmentGroup>();
         public bool IsInicialized { get; private set; } = false;
@@ -44,24 +44,22 @@ namespace Survival2D.UI.Item.Equipment
 
                 group_display.slot_display_prefab = slot_display_prefab;
                 group_display.InicializeSlots(equipment, group_type, ui_canvas_group, item_drag_display);
-            
-                if (equipment.onEquipableReplacedEvents.TryGetValue(group_display.Type, out var onEvent))
-                {
-                    onEvent.AddListener(delegate (EquipmentSlot slot_modified, ItemObject last_equipable)
-                    {
-                        if (group_display.slot_display_database.TryGetValue(slot_modified, out var slot_display))
-                        {
-                            slot_display.InicializeDisplay(slot_modified, group_display.ui_equipmentSlot_background_toPlace);
-                        }
-                    });
-                }
-#if UNITY_EDITOR
-                else
-                {
-                    Debug.LogError("event not found in equipment system");
-                }
-#endif
 
+                EquipmentMethods handler = null;
+                handler = (args) =>
+                {
+                    if (group_display.slot_display_database.TryGetValue(args.Slot, out var slot_display))
+                    {
+                        slot_display.InitializeDisplay(args.Slot, group_display.ui_equipmentSlot_background_toPlace);
+                    }
+                };
+
+                if (!equipment.TryAddMethodToEquipType(group_display.Type, handler))
+                {
+#if UNITY_EDITOR
+                    Debug.LogError($"error trying to assign method of type {group_display.Type} in equipment system");
+#endif
+                }
             }
 
             IsInicialized = true;

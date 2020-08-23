@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 
-using Survival2D.Systems;
 using Survival2D.Systems.Item;
 using Survival2D.Systems.Item.Inventory;
 
+using TMPro;
 
 namespace Survival2D.UI.Item.Inventory
 {
-    public class UI_InventorySlot : UI_IItemSlot
+    public class UI_InventorySlot : UI_IItemSlot_Draggable
     {
-        [SerializeField] private Text ui_stack = null;
+        [SerializeField] private TMP_Text ui_stack = null;
 
         public int SlotNumberDisplaying { get; set; }
         public InventorySystem Inventory { private get; set; }
@@ -46,8 +44,8 @@ namespace Survival2D.UI.Item.Inventory
         protected override void OnObjectInicialized(ItemObject item_object)
         {
             base.OnObjectInicialized(item_object);
-            if (item_object.current_stack > 1)
-                ui_stack.text = item_object.current_stack.ToString().PadLeft(2, '0');
+            if (item_object.CurrentStack > 1)
+                ui_stack.text = item_object.CurrentStack.ToString().PadLeft(2, '0');
             else
                 ui_stack.text = string.Empty;
         }

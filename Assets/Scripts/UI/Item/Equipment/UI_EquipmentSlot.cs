@@ -6,7 +6,7 @@ using Survival2D.Systems.Item;
 
 namespace Survival2D.UI.Item.Equipment
 {
-    public class UI_EquipmentSlot : UI_IItemSlot
+    public class UI_EquipmentSlot : UI_IItemSlot_Draggable
     {
         public ItemType Slot_Type { private get; set; }
         public EquipmentSystem Equipment { private get; set; }

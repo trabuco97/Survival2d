@@ -16,7 +16,7 @@ namespace Survival2D.Systems.Item
         { 
             get 
             {
-                return ItemObject.current_stack == ItemObject.ItemData.max_stack; 
+                return ItemObject.CurrentStack == ItemObject.ItemData.max_stack; 
             } 
         }
 
@@ -58,16 +58,16 @@ namespace Survival2D.Systems.Item
             if (ItemObject.ItemData.is_stackable && ItemObject.HasSameData(other_object))
             {
 
-                uint new_stack = ItemObject.current_stack + other_object.current_stack;
+                uint new_stack = ItemObject.CurrentStack + other_object.CurrentStack;
                 if (new_stack > ItemObject.ItemData.max_stack)
                 {
-                    other_object.current_stack = new_stack - ItemObject.ItemData.max_stack;
-                    ItemObject.current_stack = ItemObject.ItemData.max_stack;
+                    other_object.CurrentStack = new_stack - ItemObject.ItemData.max_stack;
+                    ItemObject.CurrentStack = ItemObject.ItemData.max_stack;
                 }
                 else
                 {
                     Destroy(collision.gameObject);
-                    ItemObject.current_stack = new_stack;
+                    ItemObject.CurrentStack = new_stack;
                 }
             }
         }

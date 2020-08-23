@@ -18,7 +18,7 @@ namespace Survival2D.Input
         }
 
 
-        protected override void InicializeBehaviour()
+        protected override void InitializeBehaviour()
         {
             IsClientInicialized = true;
         }

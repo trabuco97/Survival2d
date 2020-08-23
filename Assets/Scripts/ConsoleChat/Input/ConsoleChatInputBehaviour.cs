@@ -7,10 +7,9 @@ using Survival2D.Input;
 
 namespace ConsoleChat.Input
 {
-    public class ConsoleChatInputBehaviour : MonoBehaviour
+    public class ConsoleChatInputBehaviour : IInputClientUser
     {
         [SerializeField] private UI_ChatConsoleInputField consoleChat = null;
-        private InputClientManager input_manager = null;
 
         private bool is_auto_tab_accepted = false;
 
@@ -22,15 +21,6 @@ namespace ConsoleChat.Input
                 Debug.LogWarning($"{nameof(consoleChat)} is not assigned to {nameof(ConsoleChatInputBehaviour)} of {name}");
             }
 #endif
-        }
-
-        private void Start()
-        {
-            input_manager = InputClientManager.Instance;
-            if (input_manager.IsClientInicialized)
-            {
-                SetupCallbacks();
-            }
         }
 
         private void Update()
@@ -47,7 +37,7 @@ namespace ConsoleChat.Input
             consoleChat.ToogleDisplay();
 
             bool other_inputs = !consoleChat.IsToogled;
-            input_manager.CurrentClient.SetActionMapsState(other_inputs, CurrentActionMaps.No_SwimmableMovement, CurrentActionMaps.Inventory);
+            manager.CurrentClient.SetInputTypeState(other_inputs, new InputType[] { InputType.Gameplay, InputType.UI }, CurrentActionMaps.ConsoleChat);
         }
 
         public void PerformAutoTab()
@@ -79,9 +69,9 @@ namespace ConsoleChat.Input
 
         }
 
-        private void SetupCallbacks()
+        protected override void SetupCallbacks()
         {
-            var action_map = input_manager.CurrentClient.UIInput.ConsoleChat;
+            var action_map = manager.CurrentClient.UIInput.ConsoleChat;
 
             action_map.ToogleChat.started += var => { PerformToogleChat(); };
             action_map.ToogleAutoTab.started += var => { PerformAutoTab(); };

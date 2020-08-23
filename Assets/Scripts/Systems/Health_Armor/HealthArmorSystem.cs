@@ -17,11 +17,12 @@ namespace Survival2D.Systems.HealthArmor
         private SuitObject suit_equipped = null;
 
         // events
-        public ZeroArmorRatingEvent onZeroArmorRating { get; } = new ZeroArmorRatingEvent();
-        public ArmorRatingModificiationEvent onLossArmor { get; } = new ArmorRatingModificiationEvent();
-        public HealthModificationEvent onHealthModified { get; } = new HealthModificationEvent();
-        public ZeroHealthEvent onZeroHealth { get; } = new ZeroHealthEvent();
-        public ArmorAdquiredEvent onArmorAdquired { get; } = new ArmorAdquiredEvent();
+        public event ArmorMethods OnZeroArmorRating;
+        public event ArmorMethods OnArmorRatingModified;
+        public event ArmorMethods OnArmorEquipped;
+
+        public event HealthMethods OnHealthModified;
+        public event HealthMethods OnZeroHealth;
 
 
         // stats that the system manages
@@ -35,19 +36,25 @@ namespace Survival2D.Systems.HealthArmor
             Health = new IncrementalStat(base_health);
 
             // Link the armor equip and unequip, save the current data and inicialize new armor data
-            if (equipment_system.onEquipableReplacedEvents.TryGetValue(ItemType.Suit, out var onEvent))
+            EquipmentMethods handler = null;
+            handler = (args) =>
             {
-                onEvent.AddListener(delegate (EquipmentSlot slot, ItemObject last_equipable)
+                var last_suitObject = args.LastItemInSlot as SuitObject;
+                if (last_suitObject != null)
                 {
-                    var suitObject = last_equipable as SuitObject;
-                    if (suitObject != null)
-                    {
-                        suitObject.actual_rating = ArmorRating.NoCalculatedActualValue;
-                    }
+                    last_suitObject.ActualRating = ArmorRating.NoCalculatedActualValue;
+                }
 
-                    suit_equipped = slot.ItemContained as SuitObject;
-                    InicializeArmor();
-                });
+                suit_equipped = args.Slot.ItemContained as SuitObject;
+                InitializeArmor();
+            };
+
+
+            if (!equipment_system.TryAddMethodToEquipType(ItemType.Suit, handler))
+            {
+#if UNITY_EDITOR
+                Debug.LogError("Error trying to get handlerlist at equipment sysyem at healtharmorsysytem");
+#endif
             }
         }
 
@@ -59,8 +66,6 @@ namespace Survival2D.Systems.HealthArmor
         {
             var modifier_linkage = new StatusLinkageToStat();
             modifier_linkage.modifier = statModifier_data.modifier;
-            modifier_linkage.stats_linked = new List<Stat>();
-            modifier_linkage.onModifierRemoval = new UnityEngine.Events.UnityEvent();
 
             if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat0))
             {
@@ -70,7 +75,7 @@ namespace Survival2D.Systems.HealthArmor
                 CheckHealthIfZero();
             }
 
-            modifier_linkage.onModifierRemoval.AddListener(delegate
+            modifier_linkage.removal_methods.Add(delegate
             {
                 CheckHealthIfZero();
             });
@@ -83,7 +88,6 @@ namespace Survival2D.Systems.HealthArmor
             var modifier_linkage = new StatusLinkageToIncrementalStat();
             modifier_linkage.modifier = statModifier_data.modifier;
             modifier_linkage.stats_linked = new List<IncrementalStat>();
-            modifier_linkage.onModifierRemoval = new UnityEngine.Events.UnityEvent();
 
             if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat0))
             {
@@ -125,12 +129,12 @@ namespace Survival2D.Systems.HealthArmor
 
                         if (ArmorRating.ActualValue == 0)
                         {
-                            suit_equipped.actual_rating = 0;
-                            onZeroArmorRating.Invoke(suit_equipped);
+                            suit_equipped.ActualRating = 0;
+
+                            OnZeroArmorRating?.Invoke(new ArmorEventArgs(suit_equipped));
                         }
 
-                        onLossArmor.Invoke(ArmorRating.ActualValue, ArmorRating.Value);
-
+                        OnArmorRatingModified?.Invoke(new ArmorEventArgs(Armor.Value, ArmorRating.ActualValue, ArmorRating.Value));
                     }
                 }
             }
@@ -139,12 +143,10 @@ namespace Survival2D.Systems.HealthArmor
         public void RecoverArmor(float amount) { }
 
 
-
-
         // Pre:     suit_equipped != null
         // Post :   ArmorRating.Value != 0
         //          Armor.Value != 0
-        private void InicializeArmor()
+        private void InitializeArmor()
         {
             float base_armor_value = 0;
             // Search for sources of base armor
@@ -154,7 +156,7 @@ namespace Survival2D.Systems.HealthArmor
                 base_armor_value += suit_equipped.SuitData.base_damage_reduction;
 
                 ArmorRating.ChangeBaseValue(suit_equipped.SuitData.base_armor_rating);
-                ArmorRating.SetTemporalValue(suit_equipped.actual_rating);
+                ArmorRating.SetTemporalValue(suit_equipped.ActualRating);
             }
             else
             {
@@ -164,12 +166,7 @@ namespace Survival2D.Systems.HealthArmor
             Armor.ChangeBaseValue(base_armor_value);
 
             // add the value to the stat
-            onArmorAdquired.Invoke(new ArmorAdquiredEventInfo
-            {
-                armor_value = Armor.Value,
-                armor_rating_temp_value = ArmorRating.ActualValue,
-                armot_rating_total_value = ArmorRating.Value,
-            });
+            OnArmorEquipped?.Invoke(new ArmorEventArgs(Armor.Value, ArmorRating.ActualValue, ArmorRating.Value));
         }
 
         // Post:    Returns true if the item is 
@@ -177,12 +174,12 @@ namespace Survival2D.Systems.HealthArmor
         {
             if (Health.ActualValue == 0)
             {
-                onZeroHealth.Invoke(Health.Value);
+                OnZeroHealth?.Invoke(new HealthEventArgs(Health.ActualValue, Health.Value));
                 return true;
             }
             else
             {
-                onHealthModified.Invoke(Health.ActualValue, Health.Value);
+                OnHealthModified?.Invoke(new HealthEventArgs(Health.ActualValue, Health.Value));
                 return false;
             }
         }

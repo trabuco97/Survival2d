@@ -2,25 +2,36 @@
 {
     public class InventorySpace 
     {
-        private InventorySlot[] inventory_slots_container = null;
-
+        public uint Size { get; private set; }
         public bool IsEmpty { get { return CheckIfEmpty(); } }
-        public InventorySlot[] Slots { get { return inventory_slots_container; } }
+        public InventorySlot[] Slots { get; private set; } = null;
 
-        public InventorySpace(int space_size, InventorySystem inventory)
+        public InventorySpace(uint space_size, InventorySystem inventory)
         {
-            inventory_slots_container = new InventorySlot[space_size];
+            Slots = new InventorySlot[space_size];
             for (int i = 0; i < space_size; i++)
             {
-                inventory_slots_container[i] = new InventorySlot(inventory);
+                Slots[i] = new InventorySlot(inventory);
             }
+
+            Size = space_size;
+        }
+
+        public bool CheckIfContainsSlot(InventorySlot slot)
+        {
+            for (int i = 0; i < Slots.Length; i++)
+            {
+                if (slot == Slots[i]) return true;
+            }
+
+            return false;
         }
 
         private bool CheckIfEmpty()
         {
-            foreach (var slot in inventory_slots_container)
+            foreach (var slot in Slots)
             {
-                if (slot.ItemContained.current_stack > 0)
+                if (slot.ItemContained.CurrentStack > 0)
                     return false;
             }
 

@@ -7,14 +7,15 @@ namespace Survival2D.Systems.Statistics.Status
     public class StatusSystem
     {
         public delegate ISystemWithStatus SystemWithStatusReciever(SystemType type);
+        public delegate void StatusObjectEvent(StatusSystemArgs args);
 
-
-        private List<StatusObject> status_applied_container = null;
         private SystemWithStatusReciever system_reciever;
 
-        public StatusObjectEvent onStatusInicialized { get; } = new StatusObjectEvent();
-        public StatusObjectContainedEvent onStatusUpdate { get; } = new StatusObjectContainedEvent();
-        public StatusObjectContainedEvent onStatusRemoved { get; } = new StatusObjectContainedEvent();
+        private List<StatusObject> status_applied_container = null;
+
+        public event StatusObjectEvent OnNewStatusAdded;
+        public event StatusObjectEvent OnStatusUpdated;
+        public event StatusObjectEvent OnStatusRemoved;
 
         public StatusSystem(SystemWithStatusReciever system_getter)
         {
@@ -28,7 +29,7 @@ namespace Survival2D.Systems.Statistics.Status
             {
                 if (StatusDatabaseBehaviour.Instance.TryGetStatus(status_name, out StatusObject status_object))
                 {
-                    StatusData status_data = status_object.status_data;
+                    Scriptable_StatusData status_data = status_object.status_data;
                     foreach (var modifier_data in status_data.modifiers_data)
                     {
                         // this is workaround, improve if necessary
@@ -69,7 +70,7 @@ namespace Survival2D.Systems.Statistics.Status
                     }
 
                     status_applied_container.Add(status_object);
-                    onStatusInicialized.Invoke(status_object);
+                    OnNewStatusAdded.Invoke(new StatusSystemArgs { StatusObject = status_object });
                 }
             }
             else
@@ -77,8 +78,25 @@ namespace Survival2D.Systems.Statistics.Status
                 StatusObject status_object = GetEntityStatus(status_name);
                 status_object.actual_status_duration = status_object.status_data.status_duration;
 
-                onStatusInicialized.Invoke(status_object);
+                OnNewStatusAdded.Invoke(new StatusSystemArgs { StatusObject = status_object });
             }
+        }
+
+        // TODO: maybe improve efficiency of searching the status
+        public bool TryRemoveStatus(string name)
+        {
+            var status_array = status_applied_container.ToArray();
+            for (int i = 0; i < status_array.Length; i++)
+            {
+                var status_obj = status_array[i];
+                if (status_obj.status_data.status_name == name)
+                {
+                    DeleteStatus(status_obj, i);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void UpdateStatusDuration()
@@ -88,14 +106,13 @@ namespace Survival2D.Systems.Statistics.Status
                 var status_object = status_applied_container[i];
                 status_object.actual_status_duration -= Time.deltaTime;
 
-
-                if (status_object.actual_status_duration <= 0)
+                if (status_object.status_data.has_duration && status_object.actual_status_duration <= 0)
                 {
                     DeleteStatus(status_object, i);
                 }
                 else
                 {
-                    onStatusUpdate.Invoke(status_object, i);
+                    OnStatusUpdated.Invoke(new StatusSystemArgs { StatusObject = status_object, SlotContained = i});
                 }
             }
         }
@@ -137,7 +154,11 @@ namespace Survival2D.Systems.Statistics.Status
                         stat.RemoveModifier(linkage.modifier);
                     }
 
-                    linkage.onModifierRemoval.Invoke();
+                    foreach (var method in linkage.removal_methods)
+                    {
+                        method();
+                    }
+
                 }
             }
 
@@ -150,11 +171,13 @@ namespace Survival2D.Systems.Statistics.Status
                         incremental_stat.RemoveIncrementalModifier(incremental_linkage.modifier);
                     }
 
-                    incremental_linkage.onModifierRemoval.Invoke();
+                    foreach (var method in incremental_linkage.removal_methods)
+                    {
+                        method();
+                    }
                 }
             }
-
-            onStatusRemoved.Invoke(status_object, index);
+            OnStatusRemoved.Invoke(new StatusSystemArgs { StatusObject = status_object, SlotContained = index });
             status_applied_container.RemoveAt(index);
         }
     }

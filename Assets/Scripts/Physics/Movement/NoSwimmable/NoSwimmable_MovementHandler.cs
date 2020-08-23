@@ -5,15 +5,12 @@ using Survival2D.Input;
 
 namespace Survival2D.Physics.Movement.NoSwimmable
 {
-    public class NoSwimmable_MovementHandler : IMovementTypeHandler
+    public class NoSwimmable_MovementHandler : IMovementTypeHandlerWithInput
     {
         [SerializeField] private NoSwimmable_MovementSystem movement_system = null;
 
-        private InputClientManager input_manager = null;
-
         private InputAction horizontal_action = null;
         private bool is_horizontal_move = false;
-
 
         private void Awake()
         {
@@ -25,21 +22,12 @@ namespace Survival2D.Physics.Movement.NoSwimmable
 #endif
         }
 
-        private void Start()
-        {
-            input_manager = InputClientManager.Instance;
-            if (input_manager.IsClientInicialized)
-            {
-                SetupCallbacks();
-            }
-        }
 
         private void Update()
         {
             if (is_horizontal_move)
             {
                 movement_system.HorizontalMove(horizontal_action.ReadValue<float>());
-
             }
         }
 
@@ -54,9 +42,9 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             movement_system.HorizontalMove(ctx.ReadValue<float>());
         }
 
-        public void SetupCallbacks()
+        protected override void SetupCallbacks()
         {
-            var action_map = input_manager.CurrentClient.GameplayInput.NoSwimmable_Movement;
+            var action_map = manager.CurrentClient.GameplayInput.NoSwimmable_Movement;
 
             horizontal_action = action_map.Horizontal_Movement;
 

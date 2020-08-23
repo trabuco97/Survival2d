@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Survival2D.Systems.Item.Equipment
 {
@@ -14,8 +12,6 @@ namespace Survival2D.Systems.Item.Equipment
         public int SlotsUnlocked { get { return type_slots.Count; } }
 
         public ItemType type = ItemType.MAX_TYPES;
-
-        public UnityEvent onSlotContainerModify = new UnityEvent();
 
         public EquipmentGroupType(EquipmentSystem equipment, ItemType type, int max_slots = 1)
         {
@@ -121,7 +117,6 @@ namespace Survival2D.Systems.Item.Equipment
             if (SlotsUnlocked < max_slots)
             {
                 type_slots.Push(new EquipmentSlot(equipment, type));
-                onSlotContainerModify.Invoke();
             }
         }
 
@@ -133,8 +128,6 @@ namespace Survival2D.Systems.Item.Equipment
             {
                 EquipmentSlot slot_locked = type_slots.Pop();
                 equipable_slotless = slot_locked.ItemContained;
-
-                onSlotContainerModify.Invoke();
             }
         }
     }

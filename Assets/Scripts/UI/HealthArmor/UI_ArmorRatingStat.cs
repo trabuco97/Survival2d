@@ -12,6 +12,8 @@ namespace Survival2D.UI.HealthArmor
         [SerializeField] private Slider bar_display = null;
         [SerializeField] private TMP_Text rating_display = null;
 
+        private HealthArmorSystem current;
+
         private void Awake()
         {
 #if UNITY_EDITOR
@@ -27,6 +29,11 @@ namespace Survival2D.UI.HealthArmor
 #endif
         }
 
+        private void OnDestroy()
+        {
+            if (current != null) TerminateCallbacks(current);
+        }
+
 
         public void SetArmorRatingDisplay(float actual_rating, float total_rating)
         {
@@ -35,16 +42,26 @@ namespace Survival2D.UI.HealthArmor
             bar_display.value = actual_rating;
         }
 
-        public void InicializeDisplay(HealthArmorSystem health_system)
+        public void InitializeDisplay(HealthArmorSystem health_system)
         {
             bar_display.minValue = 0;
 
-            health_system.onArmorAdquired.AddListener(delegate (ArmorAdquiredEventInfo info)
-            {
-                SetArmorRatingDisplay(info.armor_rating_temp_value, info.armot_rating_total_value);
-            });
+            if (current != null) TerminateCallbacks(current);
+            current = health_system;
 
-            health_system.onLossArmor.AddListener(SetArmorRatingDisplay);
+            health_system.OnArmorEquipped += CallbackArmorRatingUpdate;
+            health_system.OnArmorRatingModified += CallbackArmorRatingUpdate;
+        }
+
+        private void TerminateCallbacks(HealthArmorSystem health_system)
+        {
+            health_system.OnArmorEquipped -= CallbackArmorRatingUpdate;
+            health_system.OnArmorRatingModified -= CallbackArmorRatingUpdate;
+        }
+
+        private void CallbackArmorRatingUpdate(ArmorEventArgs args)
+        {
+            SetArmorRatingDisplay(args.ActualArmorRating, args.TotalArmorRating);
         }
     }
 }

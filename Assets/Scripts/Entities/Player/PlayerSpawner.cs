@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Survival2D.Entities.Player
 {
+    /// <summary>
+    /// TODO : something something
+    /// </summary>
     public class PlayerSpawner : MonoBehaviour
     {
         [SerializeField] private GameObject player_prefab = null;
@@ -40,7 +43,15 @@ namespace Survival2D.Entities.Player
             var player = instance.GetComponent<EntityBehaviour>();
             if (player != null)
             {
-                player.onDespawn.AddListener(DestroyPlayer);
+                EntityMethods handler = null;
+
+                handler = (args) =>
+                {
+                    CallbackDestroyPlayer(args);
+                    player.OnDespawn -= handler;
+                };
+
+                player.OnDespawn += handler;
             }
 #if UNITY_EDITOR
             else
@@ -53,10 +64,9 @@ namespace Survival2D.Entities.Player
         }
 
 
-
-        private void DestroyPlayer(GameObject player)
+        private void CallbackDestroyPlayer(EntityEventArgs args)
         {
-            player_tracker_container.Remove(player);
+            player_tracker_container.Remove(args.EntityObject);
         }
 
     }

@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using Survival2D.Systems.Statistics.Status;
 using Survival2D.Systems.Item.Equipment;
+using System;
 
 namespace Survival2D.Systems.HealthArmor
 {
@@ -14,11 +15,14 @@ namespace Survival2D.Systems.HealthArmor
         [SerializeField] private EquipmentSystemBehaviour equipment_behaviour = null;
         [SerializeField] private StatusSystemBehaviour status_system_behaviour = null;
 
-        public UnityEvent OnSystemInicialized { get; } = new UnityEvent();
 
         public HealthArmorSystem HealthSystem { get; private set; } = null;
 
         public ISystemWithStatus System => HealthSystem;
+
+        public SystemType SystemType => SystemType.Health;
+
+        public event EventHandler OnSystemInicialized;
 
         private void Awake()
         {
@@ -33,13 +37,19 @@ namespace Survival2D.Systems.HealthArmor
                 Debug.LogWarning($"{nameof(status_system_behaviour)} is not assigned to {nameof(HealthArmorSystemBehaviour)} of {name}");
             }
 #endif
-            status_system_behaviour.onSystemInicialized.AddListener(InicializeSystem);
+            equipment_behaviour.OnSystemInitialized += InicializeSystem;
         }
 
-        private void InicializeSystem()
+        private void OnDestroy()
+        {
+            equipment_behaviour.OnSystemInitialized -= InicializeSystem;
+
+        }
+
+        private void InicializeSystem(object e, EventArgs args)
         {
             HealthSystem = new HealthArmorSystem(status_system_behaviour.StatusSystem, equipment_behaviour.Equipment, base_health);
-            OnSystemInicialized.Invoke();
+            OnSystemInicialized.Invoke(this, EventArgs.Empty);
         }
 
     }

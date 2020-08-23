@@ -6,8 +6,9 @@ namespace Survival2D.Systems.Item
 {
     public enum ItemType 
     {
-        Suit,
-        Material,
+        Material    = 0,
+        Suit        = 1,
+        Harpoon     = 2,
         MAX_TYPES
     }
 }

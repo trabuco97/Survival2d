@@ -9,7 +9,6 @@ namespace Survival2D.Physics.Movement
     {
         [SerializeField] protected Rigidbody2D rgb2 = null;
 
-
         private bool active_state = false;
         public bool ActiveState
         {
@@ -20,6 +19,8 @@ namespace Survival2D.Physics.Movement
                 this.enabled = value;
             }
         }
+
+        public abstract bool HasMovementSpecificRestrictions { set; }
 
 
         protected virtual void Awake()

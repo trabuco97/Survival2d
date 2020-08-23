@@ -44,18 +44,18 @@
                     // they are the same type of item
 
                     var item_data = ItemContained.ItemData;
-                    uint total_stack = ItemContained.current_stack + item_toStore.current_stack;
+                    uint total_stack = ItemContained.CurrentStack + item_toStore.CurrentStack;
 
                     if (total_stack > item_data.max_stack)
                     {
-                        ItemContained.current_stack = item_data.max_stack;
-                        item_toStore.current_stack = total_stack - item_data.max_stack;
+                        ItemContained.CurrentStack = item_data.max_stack;
+                        item_toStore.CurrentStack = total_stack - item_data.max_stack;
                         storeResult.result = StoreResult.Partial;
 
                     }
                     else
                     {
-                        ItemContained.current_stack = total_stack;
+                        ItemContained.CurrentStack = total_stack;
                         storeResult.result = StoreResult.Success;
                     }
                 }

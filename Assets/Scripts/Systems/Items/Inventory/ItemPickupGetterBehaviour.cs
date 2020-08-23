@@ -12,7 +12,7 @@ namespace Survival2D.Systems.Item.Inventory
 #if UNITY_EDITOR
             if (inventory_linked == null)
             {
-                Debug.LogWarning($"{nameof(inventory_linked)} is not assigned to {nameof(InventorySystem)} of {name}");
+                Debug.LogWarning($"{nameof(inventory_linked)} is not assigned to {nameof(InventorySystem)} of {gameObject.GetFullName()}");
             }
 #endif
         }

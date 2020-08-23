@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,37 +31,56 @@ namespace Survival2D.UI.Status
 #endif
         }
 
-        public void AddStatus(StatusObject status_toAdd)
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            Behaviour.StatusSystem.OnNewStatusAdded -= AddNewStatus;
+            Behaviour.StatusSystem.OnStatusUpdated -= UpdateSpecificStatus;
+            Behaviour.StatusSystem.OnStatusRemoved -= RemoveSpecificStatus;
+
+        }
+
+        private void AddNewStatus(StatusSystemArgs args)
         {
             var instance = Instantiate(status_display_prefab, status_holder_transform);
             var status_display = instance.GetComponent<UI_StatusObject>();
 
-            status_display.Inicialize(status_toAdd);
+            status_display.Initialize(args.StatusObject);
             status_display_container.Add(status_display);
         }
 
-        // Add callbacks to status system
-        protected override void InicializeBehaviour()
+        private void UpdateSpecificStatus(StatusSystemArgs args)
         {
-            Behaviour.onSystemInicialized.AddListener(delegate
+            status_display_container[args.SlotContained].UpdateStatusDisplay(args.StatusObject);
+        }
+
+        private void RemoveSpecificStatus(StatusSystemArgs args)
+        {
+            // Improve, maybe use a object pool
+
+            var status_display = status_display_container[args.SlotContained];
+            status_display_container.RemoveAt(args.SlotContained);
+            Destroy(status_display.gameObject);
+        }
+
+        // Add callbacks to status system
+        protected override void InitializeBehaviour()
+        {
+            EventHandler handler = null;
+            handler = delegate
             {
                 var status_system = Behaviour.StatusSystem;
 
-                status_system.onStatusInicialized.AddListener(AddStatus);
-                status_system.onStatusUpdate.AddListener(delegate (StatusObject status_object, int index)
-                {
-                    status_display_container[index].UpdateStatusDisplay(status_object);
+                status_system.OnNewStatusAdded += AddNewStatus;
+                status_system.OnStatusUpdated += UpdateSpecificStatus;
+                status_system.OnStatusRemoved += RemoveSpecificStatus;
 
-                });
-                status_system.onStatusRemoved.AddListener(delegate (StatusObject status_object, int index)
-                {
-                    // Improve, maybe use a object pool
 
-                    var status_display = status_display_container[index];
-                    status_display_container.RemoveAt(index);
-                    Destroy(status_display.gameObject);
-                });
-            });
+                Behaviour.OnSystemInitialized -= handler;
+            };
+
+            Behaviour.OnSystemInitialized += handler;
         }
     }
 }

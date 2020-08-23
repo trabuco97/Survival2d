@@ -47,10 +47,13 @@ namespace Survival2D.Physics
 
 
 #if UNITY_EDITOR
-        private Color state_color = Color.green;
+        [SerializeField] private bool is_displaying = true;
+        [SerializeField] private Color state_color = Color.green;
 
         private void OnDrawGizmos()
         {
+            if (!is_displaying) return;
+
             Gizmos.color = state_color;
             Gizmos.DrawWireCube(box_collider.bounds.center + (Vector3)(Vector2.down * delta_ground_detection_value), box_collider.bounds.size);
         }

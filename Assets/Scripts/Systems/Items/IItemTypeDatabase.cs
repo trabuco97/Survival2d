@@ -18,7 +18,7 @@ namespace Survival2D.Systems.Item
 #if UNITY_EDITOR
             if (!IsMatchingItemData())
             {
-                Debug.LogError("database has an item not matching the type");
+                //Debug.LogError("database has an item not matching the type");
             }
 #endif
 

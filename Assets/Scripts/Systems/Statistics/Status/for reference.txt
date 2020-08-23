@@ -4,6 +4,12 @@ Health
 2 - armorrating
 
 Movement
-0 - horizontal_grounded
-1 - horizontal_swim_speed;
-2 - jump_potency;
+0 - ground_stats :
+	-NOSWIMABLE - horizontal_grounded_speed
+				- horizontal_grounded_acceleration
+1 - swim_stats :
+	-NOSWIMABLE	- swim_speed
+				- horizontal_swim_acceleration
+2 - NOSWIMABLE	- jump_potency
+
+Tools

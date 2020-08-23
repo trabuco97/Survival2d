@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Survival2D.Systems.Item.Inventory
@@ -15,25 +14,36 @@ namespace Survival2D.Systems.Item.Inventory
 
     public class InventorySystem : IItemSystem
     {
-        private const int INITIAL_PLAYER_SLOTS = 10;
+        private Stack<InventorySpace> inventory_space_container = null;
 
-        public InventorySlotEvent onSlotModified { get; } = new InventorySlotEvent();
-        public UnityEvent onSpaceModified { get; } = new UnityEvent();
-        public Stack<InventorySpace> InventorySpaceContainer { get; private set; } = null;
+
+        public event InventoryMethods OnSlotModified;
+        public event EventHandler OnSpaceContainerModified;
+
+        public InventorySpace[] ReorderedInventorySpaceArray
+        {
+            get
+            {
+                var ouptut = new InventorySpace[inventory_space_container.Count];
+                int i = ouptut.Length - 1;
+                foreach (var space in inventory_space_container)
+                {
+                    ouptut[i] = space;
+                    i--;
+                }
+
+                return ouptut;
+            }
+        }
 
         public InventorySystem()
         {
-            InventorySpaceContainer = new Stack<InventorySpace>();
-            AddInventorySpace(INITIAL_PLAYER_SLOTS);
+            inventory_space_container = new Stack<InventorySpace>();
         }
-
-        [ContextMenu("Add 10 space")]
-        private void CM_AddSpace() => AddInventorySpace(10);
-
 
         public bool AddItemToAvailable(ItemObject item)
         {
-            var space_array = InventorySpaceContainer.ToArray();
+            var space_array = inventory_space_container.ToArray();
             for (int i = space_array.Length - 1; i >= 0; i--)
             {
                 foreach (var slot in space_array[i].Slots)
@@ -41,7 +51,7 @@ namespace Survival2D.Systems.Item.Inventory
                     StoreResultContext storeContext = slot.AddItem(item, StoreType.Fill);
                     if (storeContext.result == StoreResult.Success)
                     {
-                        onSlotModified.Invoke(slot);
+                        OnSlotModified.Invoke(new InventoryEventArgs(slot));
                         return true;
                     }
                 }
@@ -58,7 +68,7 @@ namespace Survival2D.Systems.Item.Inventory
                 var store_context = slot.AddItem(item, StoreType.Fill);
                 if (store_context.result == StoreResult.Success)
                 {
-                    onSlotModified.Invoke(slot);
+                    OnSlotModified.Invoke(new InventoryEventArgs(slot));
                     return true;
                 }
             }
@@ -74,7 +84,7 @@ namespace Survival2D.Systems.Item.Inventory
                 if (store_context.result == StoreResult.Success)
                 {
                     last_item_slot = store_context.slot_item;
-                    onSlotModified.Invoke(slot);
+                    OnSlotModified.Invoke(new InventoryEventArgs(slot));
 
                     return true;
                 }
@@ -84,24 +94,33 @@ namespace Survival2D.Systems.Item.Inventory
             return false;
         }
 
-        public void AddInventorySpace(int space_size)
+        public void AddInventorySpace(uint space_size)
         {
             var space = new InventorySpace(space_size, this);
-            InventorySpaceContainer.Push(space);
+            inventory_space_container.Push(space);
 
-            onSpaceModified.Invoke();
+            if (OnSpaceContainerModified != null)
+            {
+                OnSpaceContainerModified.Invoke(this, EventArgs.Empty);
+            }
         }
 
 
         public void RemoveInventorySpace()
         {
             // the player always has one space, the initial one
-            if (InventorySpaceContainer.Count == 1) return;
+            if (inventory_space_container.Count == 1) return;
 
-            if (InventorySpaceContainer.Peek().IsEmpty)
+            if (inventory_space_container.Peek().IsEmpty)
             {
-                onSpaceModified.Invoke();
-                InventorySpaceContainer.Pop();
+                inventory_space_container.Pop();
+
+
+                if (OnSpaceContainerModified != null)
+                {
+                    OnSpaceContainerModified.Invoke(this, EventArgs.Empty);
+                }
+
             }
         }
 
@@ -111,10 +130,27 @@ namespace Survival2D.Systems.Item.Inventory
 
         }
 
+        public ItemObject[] GetAllItems()
+        {
+            var item_list = new List<ItemObject>();
+            foreach (var space in inventory_space_container)
+            {
+                foreach (var slot in space.Slots)
+                {
+                    if (!slot.IsEmpty)
+                    {
+                        item_list.Add(slot.ItemContained);
+                    }
+                }
+            }
+
+            return item_list.ToArray();
+        }
+
         private bool TryGetSlot(int slot_toAcces, out InventorySlot slot)
         {
             int current_slot = slot_toAcces;
-            foreach (var space in InventorySpaceContainer)
+            foreach (var space in inventory_space_container)
             {
                 current_slot -= space.Slots.Length;
                 if (current_slot < 0)
@@ -130,7 +166,6 @@ namespace Survival2D.Systems.Item.Inventory
 
             slot = null;
             return false;
-
         }
 
         public bool IsItemUsedInSystem(ItemObject item_toEvaluate)

@@ -12,6 +12,8 @@ namespace Survival2D.UI.Status
         [SerializeField] private Image status_icon_display = null;
         [SerializeField] private TMP_Text status_time_display = null;
 
+        private bool can_be_updated = false;
+
         private void Awake()
         {
 #if UNITY_EDITOR
@@ -27,15 +29,21 @@ namespace Survival2D.UI.Status
 #endif
         }
 
-        public void Inicialize(StatusObject status_object)
+        public void Initialize(StatusObject status_object)
         {
             status_icon_display.sprite = status_object.status_data.ui_icon;
+            can_be_updated = status_object.status_data.has_duration;
+
+            if (!can_be_updated) status_time_display.text = string.Empty;
+
             UpdateStatusDisplay(status_object);
         }
 
 
         public void UpdateStatusDisplay(StatusObject status_object)
         {
+            if (!can_be_updated) return;
+
             var time_left = status_object.actual_status_duration;
             if (time_left >= 0)
             {

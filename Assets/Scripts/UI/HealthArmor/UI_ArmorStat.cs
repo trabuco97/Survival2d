@@ -10,6 +10,8 @@ namespace Survival2D.UI.HealthArmor
     {
         [SerializeField] private TMP_Text armor_display = null;
 
+        private HealthArmorSystem current;
+
         private void Awake()
         {
 #if UNITY_EDITOR
@@ -20,17 +22,32 @@ namespace Survival2D.UI.HealthArmor
 #endif
         }
 
+        private void OnDestroy()
+        {
+            if (current != null) TerminateCallbacks(current);
+        }
+
         public void SetArmorDisplay(float armor_value)
         {
             armor_display.text = armor_value.ToString().PadLeft(3, '0');
         }
 
-        public void InicializeDisplay(HealthArmorSystem health_system)
+        public void InitializeDisplay(HealthArmorSystem health_system)
         {
-            health_system.onArmorAdquired.AddListener(delegate (ArmorAdquiredEventInfo info)
-            {
-                SetArmorDisplay(info.armor_value);
-            });
+            if (current != null) TerminateCallbacks(current);
+
+            this.current = health_system;
+            health_system.OnArmorEquipped += CallbackArmorEquipped;
+        }
+
+        private void TerminateCallbacks(HealthArmorSystem health_system)
+        {
+            health_system.OnArmorEquipped -= CallbackArmorEquipped;
+        }
+
+        private void CallbackArmorEquipped(ArmorEventArgs args)
+        {
+            SetArmorDisplay(args.ArmorValue);
         }
     }
 }

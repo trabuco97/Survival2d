@@ -1,8 +1,39 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Survival2D.Entities.Player
 {
+    // All behaviours that require the player gameobject derive from this class
+    public abstract class IPlayerListener : MonoBehaviour
+    {
+        [SerializeField] private PlayerSceneBinder player_scene_binder = null;
+        protected GameObject Player { get; private set; } = null;
+
+        protected virtual void Awake()
+        {
+#if UNITY_EDITOR
+            if (player_scene_binder == null)
+            {
+                Debug.LogWarning($"{nameof(player_scene_binder)} is not assigned to {nameof(IPlayerListener)} of {gameObject.GetFullName()}");
+            }
+#endif
+            player_scene_binder.OnPlayerBinded += CallbackPlayerBinded;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            player_scene_binder.OnPlayerBinded -= CallbackPlayerBinded;
+        }
+
+        protected abstract void InitializeBehaviour();
+
+        private void CallbackPlayerBinded(EntityEventArgs args)
+        {
+            Player = args.EntityObject;
+            InitializeBehaviour();
+        }
+
+    }
+
     // All behaviours in the scene that requieres components from the player derive from this class
     public abstract class IPlayerBehaviourListener<T> : MonoBehaviour where T : MonoBehaviour
     {
@@ -21,15 +52,15 @@ namespace Survival2D.Entities.Player
                 Debug.LogWarning($"{nameof(player_scene_binder)} is not assigned to {nameof(IPlayerBehaviourListener<T>)} of {name}");
             }
 #endif
-
-            player_scene_binder.onPlayerBinded.AddListener(delegate (GameObject player)
-            {
-                Behaviour = GetBehaviour();
-                InicializeBehaviour();
-            });
+            player_scene_binder.OnPlayerBinded += CallbackPlayerBinded;
         }
 
-        protected abstract void InicializeBehaviour();
+        protected virtual void OnDestroy()
+        {
+            player_scene_binder.OnPlayerBinded -= CallbackPlayerBinded;
+        }
+
+        protected abstract void InitializeBehaviour();
 
         private T GetBehaviour()
         {
@@ -45,6 +76,12 @@ namespace Survival2D.Entities.Player
 #endif
                 return null;
             }
+        }
+
+        private void CallbackPlayerBinded(EntityEventArgs args)
+        {
+            Behaviour = GetBehaviour();
+            InitializeBehaviour();
         }
     }
     // used in behaviour for two behaviours
@@ -66,15 +103,15 @@ namespace Survival2D.Entities.Player
                 Debug.LogWarning($"{nameof(player_scene_binder)} is not assigned to {nameof(IPlayerBehaviourListener_TwoArgs<T1, T2>)} of {name}");
             }
 #endif
-            player_scene_binder.onPlayerBinded.AddListener(delegate (GameObject player)
-            {
-                Behaviour1 = GetBehaviour<T1>();
-                Behaviour2 = GetBehaviour<T2>();
-                InicializeBehaviours();
-            });
+            player_scene_binder.OnPlayerBinded += CallbackPlayerBinded;
         }
 
-        protected abstract void InicializeBehaviours();
+        protected virtual void OnDestroy()
+        {
+            player_scene_binder.OnPlayerBinded -= CallbackPlayerBinded;
+        }
+
+        protected abstract void InitializeBehaviour();
 
         private TArgs GetBehaviour<TArgs>() where TArgs : MonoBehaviour
         {
@@ -89,6 +126,13 @@ namespace Survival2D.Entities.Player
 #endif
                 return null;
             }
+        }
+
+        private void CallbackPlayerBinded(EntityEventArgs args)
+        {
+            Behaviour1 = GetBehaviour<T1>();
+            Behaviour2 = GetBehaviour<T2>();
+            InitializeBehaviour();
         }
     }
 }

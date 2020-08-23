@@ -19,11 +19,24 @@ namespace Survival2D.Physics.Movement.NoSwimmable
         [SerializeField] private float horizontal_swim_acceleration_value = 0f;
         [SerializeField] private float jump_potency_value = 0f;
 
-        [SerializeField] private bool can_swim_surpass_limits = false;
-
         [SerializeField] private float min_jump_angle = 70f;
 
+        [SerializeField] private bool awake_ground_restricted = true;
+        [SerializeField] private bool awake_swim_restricted = true;
+
         public NoSwimmable_MovementStats stats;
+
+        public bool IsGroundRestricted { get; private set; } = true;
+        public bool IsSwimRestricted { get; private set; } = true;
+        public override bool HasMovementSpecificRestrictions 
+        { 
+            set
+            {
+                IsGroundRestricted = value;
+                IsSwimRestricted = value;
+            }
+        }
+
 
         // negative value - left
         // positive value - right
@@ -43,6 +56,9 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             stats.swim_speed = new Stat(swim_speed_value);
             stats.horizontal_swim_acceleration = new Stat(horizontal_swim_acceleration_value);
             stats.jump_potency = new Stat(jump_potency_value);
+
+            IsGroundRestricted = awake_ground_restricted;
+            IsSwimRestricted = awake_swim_restricted;
         }
 
 
@@ -51,7 +67,6 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             rgb2.velocity = CheckForVelocityConstraints(rgb2.velocity);
         }
 
-
         public override StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data)
         {
             return null;
@@ -59,7 +74,38 @@ namespace Survival2D.Physics.Movement.NoSwimmable
 
         public override StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data)
         {
-            throw new NotImplementedException();
+            var linkage = new StatusLinkageToStat();
+            linkage.modifier = statModifier_data.modifier;
+
+            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat0))
+            {
+                stats.horizontal_grounded_acceleration.AddModifier(statModifier_data.modifier);
+                stats.horizontal_grounded_speed.AddModifier(statModifier_data.modifier);
+
+                linkage.stats_linked.Add(stats.horizontal_grounded_acceleration);
+                linkage.stats_linked.Add(stats.horizontal_grounded_speed);
+
+            }
+
+
+            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat1))
+            {
+                stats.swim_speed.AddModifier(statModifier_data.modifier);
+                stats.horizontal_swim_acceleration.AddModifier(statModifier_data.modifier);
+
+                linkage.stats_linked.Add(stats.swim_speed);
+                linkage.stats_linked.Add(stats.horizontal_swim_acceleration);
+            }
+
+            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat2))
+            {
+                stats.jump_potency.AddModifier(statModifier_data.modifier);
+
+                linkage.stats_linked.Add(stats.jump_potency);
+            }
+
+
+            return linkage;
         }
 
         public void Jump()
@@ -68,13 +114,11 @@ namespace Survival2D.Physics.Movement.NoSwimmable
 
             var jump_rad = CalculateJumpAngle() * Mathf.Deg2Rad;
             var jump_vector = new Vector2(Mathf.Cos(jump_rad), Mathf.Sin(jump_rad));
-            Debug.Log(jump_vector);
             if (IsLeft(rgb2.velocity.x))
             {
                 jump_vector.x *= -1;
             }
-
-            jump_vector *= jump_potency_value;
+            jump_vector *= stats.jump_potency.Value;
             rgb2.AddForce(jump_vector, ForceMode2D.Impulse);
         }
 
@@ -99,19 +143,22 @@ namespace Survival2D.Physics.Movement.NoSwimmable
         {
             if (ground_detector.IsGrounded)
             {
-                var horizontal_grounded_limit = stats.horizontal_grounded_speed.Value;
-                if (Mathf.Abs(velocity.x) > horizontal_grounded_limit)
+                if (IsGroundRestricted)
                 {
-                    var new_velocity_x = horizontal_grounded_limit;
-                    if (IsLeft(velocity.x))
+                    var horizontal_grounded_limit = stats.horizontal_grounded_speed.Value;
+                    if (Mathf.Abs(velocity.x) > horizontal_grounded_limit)
                     {
-                        new_velocity_x *= -1;
-                    }
+                        var new_velocity_x = horizontal_grounded_limit;
+                        if (IsLeft(velocity.x))
+                        {
+                            new_velocity_x *= -1;
+                        }
 
-                    velocity.x = new_velocity_x;
+                        velocity.x = new_velocity_x;
+                    }
                 }
             }
-            else if (!can_swim_surpass_limits)
+            else if (IsSwimRestricted)
             {
                 var swim_limit = stats.swim_speed.Value;
                 if (velocity.magnitude > swim_limit)
@@ -122,11 +169,6 @@ namespace Survival2D.Physics.Movement.NoSwimmable
                     if (new_velocity_magnitude - swim_limit <= 0.01) new_velocity_magnitude = swim_limit;
 
                     var new_velocity = velocity.normalized * new_velocity_magnitude;
-                    if (IsLeft(velocity.x))
-                    {
-                        new_velocity.x *= -1;
-                    }
-
                     velocity = new_velocity;
                 }
             }

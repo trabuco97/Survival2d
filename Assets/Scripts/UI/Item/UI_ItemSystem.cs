@@ -55,7 +55,7 @@ namespace Survival2D.UI.Item
             {
                 if (!inventory_display.IsInicialized)
                 {
-                    inventory_display.InicializeSlots(Behaviour2.Inventory);
+                    inventory_display.InitializeSlots(Behaviour2.Inventory);
                 }
 
                 if (!equipment_display.IsInicialized)
@@ -65,7 +65,7 @@ namespace Survival2D.UI.Item
             }
         }
 
-        protected override void InicializeBehaviours()
+        protected override void InitializeBehaviour()
         {
         }
     }

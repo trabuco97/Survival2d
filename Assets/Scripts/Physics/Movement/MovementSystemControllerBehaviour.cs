@@ -25,8 +25,9 @@ namespace Survival2D.Physics.Movement
         private Dictionary<MovementType, MovementSystemWrapper> movement_database = new Dictionary<MovementType, MovementSystemWrapper>();
         private IMovementSystem current_movement = null;
 
-        public override UnityEvent OnSystemInicialized => new UnityEvent();
-        public override ISystemWithStatus System => this;
+        public override SystemType SystemType => SystemType.Movement;
+
+        public override event EventHandler OnSystemInicialized;
 
         private void Awake()
         {
@@ -55,7 +56,7 @@ namespace Survival2D.Physics.Movement
 
         private void Start()
         {
-            OnSystemInicialized.Invoke();
+            OnSystemInicialized.Invoke(this, EventArgs.Empty);
         }
 
         public void SetCurrentMovement(MovementType type)
@@ -73,6 +74,12 @@ namespace Survival2D.Physics.Movement
             }
 #endif
         }
+
+        public void SetCurrentMovementRestrictions(bool state)
+        {
+            current_movement.HasMovementSpecificRestrictions = state;
+        }
+
 
         public T GetCurrentMovement<T>() where T : IMovementSystem
         {
@@ -108,12 +115,23 @@ namespace Survival2D.Physics.Movement
 
         public override StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
         public override StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data)
         {
-            throw new System.NotImplementedException();
+            var linkage = new StatusLinkageToStat();
+            linkage.modifier = statModifier_data.modifier;
+
+
+            // This assumes that each wrapper has a different movement type
+            foreach (var wrapper in movement_database.Values)
+            {
+                 var movement_linkage = wrapper.movement_system.LinkModifierToStat(statModifier_data);
+                linkage.stats_linked.AddRange(movement_linkage.stats_linked);
+            }
+
+            return linkage;
         }
     }
 }

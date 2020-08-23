@@ -18,7 +18,7 @@ namespace Survival2D.Systems.Statistics.Status.Command
         {
             if (args.Length != 1) return false;
 
-            var status_system = PlayerManager.Instance.player_object.GetComponentInChildren<StatusSystemBehaviour>();
+            var status_system = PlayerManager.Instance.PlayerObject.GetComponentInChildren<StatusSystemBehaviour>();
             if (status_system != null)
             {
                 status_system.StatusSystem.AddStatus(args[0]);

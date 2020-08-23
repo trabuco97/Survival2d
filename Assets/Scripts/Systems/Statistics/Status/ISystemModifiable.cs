@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System;
+using UnityEngine;
 
 namespace Survival2D.Systems.Statistics.Status
 {
@@ -13,16 +13,18 @@ namespace Survival2D.Systems.Statistics.Status
         StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
     }
 
-    public interface ISystemWithStatusBehaviour
+    public interface ISystemWithStatusBehaviour : ISystemBehaviour
     {
-        UnityEvent OnSystemInicialized { get; }
+        event EventHandler OnSystemInicialized;
         ISystemWithStatus System { get; }
     }
 
     public abstract class ISystemBehaviourWithStatus : MonoBehaviour, ISystemWithStatusBehaviour, ISystemWithStatus
     {
-        public abstract UnityEvent OnSystemInicialized { get; }
-        public abstract ISystemWithStatus System { get; }
+        public ISystemWithStatus System => this;
+        public abstract SystemType SystemType { get; }
+
+        public abstract event EventHandler OnSystemInicialized;
 
         public abstract StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
         public abstract StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);

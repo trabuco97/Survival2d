@@ -7,6 +7,6 @@ namespace Survival2D.UI.HealthArmor
 {
     public interface UI_IHealthArmorStat
     {
-        void InicializeDisplay(HealthArmorSystem health_system);
+        void InitializeDisplay(HealthArmorSystem health_system);
     }
 }

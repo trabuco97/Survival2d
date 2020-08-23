@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Survival2D.Systems.Item.Inventory;
@@ -8,13 +9,12 @@ namespace Survival2D.UI.Item.Inventory
     public class UI_Inventory : MonoBehaviour
     {
         [SerializeField] private CanvasGroup ui_canvas_group = null;
-        [SerializeField] private UI_ItemDrag item_drag_display = null;
+        [SerializeField] private UI_ItemDragImage item_drag_display = null;
         [SerializeField] private GameObject slot_display_prefab = null;
         [SerializeField] private Transform grid_transform = null;
 
+        private InventorySystem current_inventory = null;
         private Dictionary<InventorySlot, UI_InventorySlot> slot_display_database = null;
-
-        private bool are_callbacks_inicialized = false;
 
         public bool IsInicialized { get; private set; } = false;
 
@@ -42,36 +42,46 @@ namespace Survival2D.UI.Item.Inventory
 #endif
         }
 
+        private void OnDestroy()
+        {
+            if (current_inventory != null)
+            {
+                TerminateCallbacks(current_inventory);
+            }
+        }
 
-        public void InicializeSlots(InventorySystem inventory)
+
+        public void InitializeSlots(InventorySystem inventory)
         {
             if (IsInicialized) return;
-
             if (slot_display_database != null) DestroySlots();
-            if (!are_callbacks_inicialized) InicializeCallbacks(inventory);
+            if (this.current_inventory != null)
+            {
+                TerminateCallbacks(this.current_inventory);
+            }
+
+            this.current_inventory = inventory;
+            InitializeCallbacks(inventory);
+
 
             slot_display_database = new Dictionary<InventorySlot, UI_InventorySlot>();
-
-            var inventory_spaces_array = inventory.InventorySpaceContainer.ToArray();
-
+            var inventory_spaces_array = inventory.ReorderedInventorySpaceArray;
             int slot_number_count = 0;
-
-            for (int i = inventory_spaces_array.Length - 1; i >= 0; i--)
+            for (int i = 0; i < inventory_spaces_array.Length; i++)
             {
                 foreach (var slot in inventory_spaces_array[i].Slots)
                 {
-
                     GameObject slot_display_instance = Instantiate(slot_display_prefab, grid_transform);
                     UI_InventorySlot slot_display = slot_display_instance.GetComponent<UI_InventorySlot>();
 
                     slot_display_database.Add(slot, slot_display);
 
-                    slot_display.InicializeDisplay(slot);
+                    slot_display.InitializeDisplay(slot);
 
                     slot_display.Inventory = inventory;
                     slot_display.SlotNumberDisplaying = slot_number_count++;
                     slot_display.ui_canvas_group = ui_canvas_group;
-                    slot_display.item_drag_display = item_drag_display;
+                    slot_display.ItemDragDisplay = item_drag_display;
 
                 }
             }
@@ -79,29 +89,41 @@ namespace Survival2D.UI.Item.Inventory
             IsInicialized = true;
         }
 
-        private void InicializeCallbacks(InventorySystem inventory)
-        {
-            inventory.onSlotModified.AddListener(delegate (InventorySlot slot_modified)
-            {
-                if (IsInicialized && slot_display_database.TryGetValue(slot_modified, out var slot_display))
-                {
-                    slot_display.InicializeDisplay(slot_modified);
-                }
-            });
 
-            inventory.onSpaceModified.AddListener(delegate
-            {
-                IsInicialized = false;
-                InicializeSlots(inventory);
-                UpdateAllDisplays();
-            });
+
+        private void InitializeCallbacks(InventorySystem inventory)
+        {
+            inventory.OnSlotModified += SlotModifiedCallback;
+            inventory.OnSpaceContainerModified += SpaceModifiedCallback;
         }
+
+        private void TerminateCallbacks(InventorySystem previous_inventory)
+        {
+            previous_inventory.OnSlotModified -= SlotModifiedCallback;
+            previous_inventory.OnSpaceContainerModified -= SpaceModifiedCallback;
+        }
+
+        private void SlotModifiedCallback(InventoryEventArgs args)
+        {
+            if (IsInicialized && slot_display_database.TryGetValue(args.SlotModified, out var slot_display))
+            {
+                slot_display.InitializeDisplay(args.SlotModified);
+            }
+        }
+
+        private void SpaceModifiedCallback(object e, EventArgs args)
+        {
+            IsInicialized = false;
+            InitializeSlots(current_inventory);
+            UpdateAllDisplays();
+        }
+
 
         private void UpdateAllDisplays()
         {
             foreach (var pair in slot_display_database)
             {
-                pair.Value.InicializeDisplay(pair.Key);
+                pair.Value.InitializeDisplay(pair.Key);
             }
         }
 

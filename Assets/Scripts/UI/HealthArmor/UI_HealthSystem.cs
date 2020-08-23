@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 using Survival2D.Entities.Player;
@@ -35,17 +34,23 @@ namespace Survival2D.UI.HealthArmor
 
         }
 
-        protected override void InicializeBehaviour()
+        protected override void OnDestroy()
         {
-            Behaviour.OnSystemInicialized.AddListener(InicializedDisplay);
+            base.OnDestroy();
+            Behaviour.OnSystemInicialized -= InicializeDisplay;
         }
 
-        private void InicializedDisplay()
+        protected override void InitializeBehaviour()
+        {
+            Behaviour.OnSystemInicialized += InicializeDisplay;
+        }
+
+        private void InicializeDisplay(object e, EventArgs args)
         {
             var health_system = Behaviour.HealthSystem;
-            health_display.InicializeDisplay(health_system);
-            armor_display.InicializeDisplay(health_system);
-            armorRating_display.InicializeDisplay(health_system);
+            health_display.InitializeDisplay(health_system);
+            armor_display.InitializeDisplay(health_system);
+            armorRating_display.InitializeDisplay(health_system);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Survival2D.UI.Item.Equipment
 #endif
         }
 
-        public void InicializeSlots(EquipmentSystem equipment, EquipmentGroupType group_type, CanvasGroup ui_canvas_group, UI_ItemDrag item_drag_display)
+        public void InicializeSlots(EquipmentSystem equipment, EquipmentGroupType group_type, CanvasGroup ui_canvas_group, UI_ItemDragImage item_drag_display)
         {
             if (slot_display_database != null) DestroySlotDisplays();
             slot_display_database = new Dictionary<EquipmentSlot, UI_EquipmentSlot>();
@@ -41,7 +41,7 @@ namespace Survival2D.UI.Item.Equipment
                 var slot_display = instance.GetComponent<UI_EquipmentSlot>();
 
                 slot_display.ui_canvas_group = ui_canvas_group;
-                slot_display.item_drag_display = item_drag_display;
+                slot_display.ItemDragDisplay = item_drag_display;
 
                 var slot = slots_array[i];
 
@@ -65,7 +65,7 @@ namespace Survival2D.UI.Item.Equipment
 
         private void SetSlotValues(UI_EquipmentSlot display, EquipmentSystem equipment, EquipmentSlot slot, int slot_number)
         {
-            display.InicializeDisplay(slot, ui_equipmentSlot_background_toPlace);
+            display.InitializeDisplay(slot, ui_equipmentSlot_background_toPlace);
             display.Slot_Type = Type;
             display.SlotNumberDisplayed = slot_number;
             display.Equipment = equipment;

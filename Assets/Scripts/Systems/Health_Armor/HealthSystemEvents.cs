@@ -1,45 +1,44 @@
 ﻿using System;
-using UnityEngine;
-using UnityEngine.Events;
 
 using Survival2D.Systems.Item.Suit;
 
 namespace Survival2D.Systems.HealthArmor
 {
+    public delegate void HealthMethods(HealthEventArgs args);
+    public delegate void ArmorMethods(ArmorEventArgs args);
 
-
-    /// <summary>
-    /// 0 - actual health
-    /// 1 - total health 
-    /// </summary>
-    [Serializable]
-    public class HealthModificationEvent : UnityEvent<float, float> { }
-
-    /// <summary>
-    /// 0 - actual rating
-    /// 1- total rating
-    /// </summary>
-    [Serializable]
-    public class ArmorRatingModificiationEvent : UnityEvent<float, float> { }
-
-
-    /// <summary>
-    /// 0 - total health
-    /// </summary>
-    [Serializable]
-    public class ZeroHealthEvent : UnityEvent<float> { }
-
-
-    public class ArmorAdquiredEventInfo
+    public class HealthEventArgs : EventArgs
     {
-        public float armor_value;
-        public float armor_rating_temp_value;
-        public float armot_rating_total_value;
+        public float ActualHealth { get; private set; }
+        public float TotalHealth { get; private set; }
+
+
+        public HealthEventArgs(float actual_health, float total_health)
+        {
+            ActualHealth = actual_health;
+            TotalHealth = total_health;
+        }
     }
 
-    [Serializable]
-    public class ArmorAdquiredEvent : UnityEvent<ArmorAdquiredEventInfo> { }
+    public class ArmorEventArgs : EventArgs
+    {
+        public float ArmorValue { get; private set; }
+        public float ActualArmorRating { get; private set; }
+        public float TotalArmorRating { get; private set; }
+        public SuitObject SuitEquipped { get; private set; }
 
-    [Serializable]
-    public class ZeroArmorRatingEvent : UnityEvent<SuitObject> { }
+        public ArmorEventArgs(SuitObject suit_equipped)
+        {
+            SuitEquipped = suit_equipped;
+        }
+
+        public ArmorEventArgs(float armor_value, float actual_armor_rating, float total_armor_rating)
+        {
+            ArmorValue = armor_value;
+            ActualArmorRating = actual_armor_rating;
+            TotalArmorRating = total_armor_rating;
+        }
+
+    }
+
 }
