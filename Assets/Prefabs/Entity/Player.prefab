@@ -303,6 +303,7 @@ GameObject:
   - component: {fileID: 3105786149915812202}
   - component: {fileID: 5500766238386064144}
   - component: {fileID: 6342273161292494618}
+  - component: {fileID: 617748982297425581}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -365,6 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16842e88590d7224690966dd8ad8769d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  order_container: {fileID: 617748982297425581}
 --- !u!114 &6342273161292494618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +380,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input_client: {fileID: 3105786149965391634}
+--- !u!114 &617748982297425581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3105786149915812201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f587b94ce7226eb4d9c802314b072f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layer_container:
+  - order:
+    - ObjectField: {fileID: 0}
+      ResultType: 
+    - ObjectField: {fileID: 0}
+      ResultType: 
+    - ObjectField: {fileID: 0}
+      ResultType: 
+  - order:
+    - ObjectField: {fileID: 0}
+      ResultType: 
+  - order: []
+  - order: []
+  - order: []
 --- !u!1 &3105786149965391632
 GameObject:
   m_ObjectHideFlags: 0

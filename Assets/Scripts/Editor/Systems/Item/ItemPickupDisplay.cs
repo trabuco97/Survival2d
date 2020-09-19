@@ -2,7 +2,7 @@
 using UnityEditor;
 using Survival2D.Systems.Item;
 
-[CustomEditor(typeof(ItemPickup))]
+[CustomEditor(typeof(ItemPickupBehaviour))]
 public class ItemPickupDisplay : Editor
 {
 
@@ -10,7 +10,7 @@ public class ItemPickupDisplay : Editor
     {
         base.OnInspectorGUI();
 
-        ItemPickup pickup = (ItemPickup)target;
+        ItemPickupBehaviour pickup = (ItemPickupBehaviour)target;
         if (GUILayout.Button("Display Boundaries"))
         {
             pickup.is_boundaries_shown = true;

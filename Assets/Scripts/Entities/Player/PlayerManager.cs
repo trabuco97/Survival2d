@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
+
+using Survival2D.Saving;
 
 namespace Survival2D.Entities.Player
 {
@@ -7,13 +8,15 @@ namespace Survival2D.Entities.Player
     // TODO : support for multiple players
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] private GameObject player_object_AtAwake = null;       // TODO: if using it, change how dependencies between systems works 
+        [SerializeField] private bool spawn_at_Start = false;
+        [SerializeField] private EntityBehaviour custom_player_object = null;       // TODO: if using it, change how dependencies between systems works 
 
+        [Header("References")]
         [SerializeField] private PlayerSpawner spawner_behaviour = null;
         [SerializeField] private PlayerSceneBinder binder_behaviour = null;
 
         public static PlayerManager Instance { get; private set; }
-        public GameObject PlayerObject { get; private set; } = null;
+        public EntityBehaviour PlayerEntity { get; private set; } = null;
 
         private void Awake()
         {
@@ -30,26 +33,39 @@ namespace Survival2D.Entities.Player
 #endif
 
             Instance = this;
-            if (player_object_AtAwake != null)
+            if (custom_player_object != null)
             {
-                PlayerObject = player_object_AtAwake;
+                PlayerEntity = custom_player_object;
             }
 
         }
 
-        private void Start()
+        private void SpawnPlayer()
         {
-            if (player_object_AtAwake == null)
+            if (custom_player_object == null)
             {
-                PlayerObject = spawner_behaviour.SpawnPlayer();
+                PlayerEntity = spawner_behaviour.SpawnEntity();
             }
             else
             {
-                PlayerObject = player_object_AtAwake;
+                PlayerEntity = custom_player_object;
             }
 
-            binder_behaviour.BindPlayerToScene(PlayerObject);
+        }
 
+        private void InitializePlayer()
+        {
+            PlayerEntity.OrderBehaviour.InitializeObject();
+            binder_behaviour.BindPlayerToScene(PlayerEntity);
+        }
+
+        private void Start()
+        {
+            if (spawn_at_Start)
+            {
+                SpawnPlayer();
+                InitializePlayer();
+            }
         }
     }
 }

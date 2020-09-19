@@ -7,7 +7,7 @@ using System;
 namespace Survival2D.Systems.HealthArmor
 {
 
-    public class HealthArmorSystemBehaviour : MonoBehaviour, ISystemWithStatusBehaviour
+    public class HealthArmorSystemBehaviour : MonoBehaviour, ISystemWithStatusBehaviour, IOrderedBehaviour
     {
         // workaround, modifiy later
         [SerializeField] private float base_health = 0f;
@@ -15,14 +15,13 @@ namespace Survival2D.Systems.HealthArmor
         [SerializeField] private EquipmentSystemBehaviour equipment_behaviour = null;
         [SerializeField] private StatusSystemBehaviour status_system_behaviour = null;
 
-
         public HealthArmorSystem HealthSystem { get; private set; } = null;
 
         public ISystemWithStatus System => HealthSystem;
 
         public SystemType SystemType => SystemType.Health;
 
-        public event EventHandler OnSystemInicialized;
+        public int Order => 4;
 
         private void Awake()
         {
@@ -37,20 +36,19 @@ namespace Survival2D.Systems.HealthArmor
                 Debug.LogWarning($"{nameof(status_system_behaviour)} is not assigned to {nameof(HealthArmorSystemBehaviour)} of {name}");
             }
 #endif
-            equipment_behaviour.OnSystemInitialized += InicializeSystem;
         }
 
-        private void OnDestroy()
+        public void Initialize()
         {
-            equipment_behaviour.OnSystemInitialized -= InicializeSystem;
-
+            HealthSystem = new HealthArmorSystem(status_system_behaviour.StatusSystem, equipment_behaviour.Equipment);
         }
 
-        private void InicializeSystem(object e, EventArgs args)
+#if UNITY_EDITOR
+        [ContextMenu("Reduce 10 hp")]
+        private void Reduce10HP()
         {
-            HealthSystem = new HealthArmorSystem(status_system_behaviour.StatusSystem, equipment_behaviour.Equipment, base_health);
-            OnSystemInicialized.Invoke(this, EventArgs.Empty);
+            HealthSystem.ModifyHealth(new HealthModificationInfo(Statistics.IncrementalStat.AdditiveTemporaryType.Flat, -10));
         }
-
+#endif
     }
 }

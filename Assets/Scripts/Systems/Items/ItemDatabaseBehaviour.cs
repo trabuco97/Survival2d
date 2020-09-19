@@ -5,10 +5,10 @@ namespace Survival2D.Systems.Item
 {
     public class ItemDatabaseBehaviour : MonoBehaviour
     {
-        [SerializeField] private IItemTypeDatabase[] draggable_type_databases = null;
-        private Dictionary<ItemType, IItemTypeDatabase> item_database = new Dictionary<ItemType, IItemTypeDatabase>();
+        [SerializeField] private Scriptable_ItemTypeDatabase[] draggable_type_databases = null;
+        private Dictionary<ItemType, Scriptable_ItemTypeDatabase> item_database = new Dictionary<ItemType, Scriptable_ItemTypeDatabase>();
 
-        public static ItemDatabaseBehaviour Instance;
+        public static ItemDatabaseBehaviour Instance { get; private set; } = null;
 
         private void Awake()
         {
@@ -26,9 +26,9 @@ namespace Survival2D.Systems.Item
             }
         }
 
-        public IItemData GetItemData(ItemType type, int id_itemtype)
+        public Scriptable_IItemData GetItemData(ItemType type, int id_itemtype)
         {
-            if (item_database.TryGetValue(type, out IItemTypeDatabase database))
+            if (item_database.TryGetValue(type, out Scriptable_ItemTypeDatabase database))
             {
                 return database.RetrieveData(id_itemtype);
             }

@@ -9,18 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70450cddc9983274ab38e830993c1f3a, type: 3}
+  m_Script: {fileID: 11500000, guid: 09ccc2db390aeb84795f5840789ea232, type: 3}
   m_Name: Suit_000
   m_EditorClassIdentifier: 
-  item_name: chaos control
+  item_name: FirstSuit
   max_stack: 1
   is_stackable: 0
   type: 1
   rarity: 0
-  ui_display: {fileID: 21300000, guid: 5bccf13ce09bd43e39c1c3416d5de92c, type: 3}
+  ui_display: {fileID: 21300000, guid: 3fc2bbd409bf34ab6af1637bab569da1, type: 3}
   base_damage_reduction: 25
   base_armor_rating: 1000
-  base_armor_rating_loss: 100
-  base_radiation_protection: 20
+  base_armor_rating_loss: 10
+  base_radiation_protection: 50
   status_applied:
   - DEBUG_SUIT000_HealthIncrease

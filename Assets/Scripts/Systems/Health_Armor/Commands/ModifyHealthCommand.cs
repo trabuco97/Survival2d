@@ -32,8 +32,8 @@ namespace Survival2D.Systems.HealthArmor.Command
 
             string[] status = args.Skip(2).ToArray();
 
-            var player_health = PlayerManager.Instance.PlayerObject.GetComponentInChildren<HealthArmorSystemBehaviour>();
-            player_health.HealthSystem.ModifyHealth(new HealthModificationInfo { health_delta_value = delta_health, temporal_delta_type = temporalType, status_applied = status });
+            var player_health = PlayerManager.Instance.PlayerEntity.GetComponentInChildren<HealthArmorSystemBehaviour>();
+            player_health.HealthSystem.ModifyHealth(new HealthModificationInfo(temporalType, delta_health, status));
             return true;
         }
 

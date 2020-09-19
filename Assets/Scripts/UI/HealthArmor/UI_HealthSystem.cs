@@ -37,17 +37,12 @@ namespace Survival2D.UI.HealthArmor
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            Behaviour.OnSystemInicialized -= InicializeDisplay;
         }
 
         protected override void InitializeBehaviour()
         {
-            Behaviour.OnSystemInicialized += InicializeDisplay;
-        }
-
-        private void InicializeDisplay(object e, EventArgs args)
-        {
             var health_system = Behaviour.HealthSystem;
+
             health_display.InitializeDisplay(health_system);
             armor_display.InitializeDisplay(health_system);
             armorRating_display.InitializeDisplay(health_system);

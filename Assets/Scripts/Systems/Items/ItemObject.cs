@@ -7,13 +7,13 @@ namespace Survival2D.Systems.Item
     [System.Serializable]
     public class ItemObject 
     {
-        private IItemData item_data = null;
+        private Scriptable_IItemData item_data = null;
 
         public bool IsInicialized { get { return (Type != ItemType.MAX_TYPES && ID != -1); } }
         public ItemType Type { get; } = ItemType.MAX_TYPES;
         public int ID { get; } = -1;
         public uint CurrentStack { get; set; } = 0;
-        public IItemData ItemData { get { return item_data; } }
+        public Scriptable_IItemData ItemData { get { return item_data; } }
 
         public ItemObject(ItemType type, int id, uint current_stack, bool inicialize_data = true)
         {

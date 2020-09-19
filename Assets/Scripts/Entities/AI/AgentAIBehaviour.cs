@@ -9,12 +9,12 @@ namespace Survival2D.Entities.AI
         [SerializeField] private Scriptable_AnimalAI animal_ai = null;
         [SerializeField] private EntityBehaviour entity = null;
 
-        private AgentAI agent  = null;
+        public AgentAI Agent { get; private set; } = null;
         private float current_update_time = 0f;
 
         private void Awake()
         {
-            agent = ScriptableAIProcessor.ProcessScriptableAI(animal_ai);
+            Agent = ScriptableAIProcessor.ProcessScriptableAI(animal_ai);
             current_update_time = custom_update_time;
         }
 
@@ -25,7 +25,7 @@ namespace Survival2D.Entities.AI
             if (current_update_time <= 0)
             {
                 current_update_time = custom_update_time;
-                agent.RecalculateActionToPerform(new AIGameContext { current_entity = entity });
+                Agent.RecalculateActionToPerform(new AIGameContext { current_entity = entity });
             }
         }
 

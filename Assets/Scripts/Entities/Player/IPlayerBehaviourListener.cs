@@ -6,7 +6,7 @@ namespace Survival2D.Entities.Player
     public abstract class IPlayerListener : MonoBehaviour
     {
         [SerializeField] private PlayerSceneBinder player_scene_binder = null;
-        protected GameObject Player { get; private set; } = null;
+        protected EntityBehaviour PlayerEntity { get; private set; } = null;
 
         protected virtual void Awake()
         {
@@ -16,10 +16,14 @@ namespace Survival2D.Entities.Player
                 Debug.LogWarning($"{nameof(player_scene_binder)} is not assigned to {nameof(IPlayerListener)} of {gameObject.GetFullName()}");
             }
 #endif
+        }
+
+        protected virtual void OnEnable()
+        {
             player_scene_binder.OnPlayerBinded += CallbackPlayerBinded;
         }
 
-        protected virtual void OnDestroy()
+        protected virtual void OnDisable()
         {
             player_scene_binder.OnPlayerBinded -= CallbackPlayerBinded;
         }
@@ -28,7 +32,7 @@ namespace Survival2D.Entities.Player
 
         private void CallbackPlayerBinded(EntityEventArgs args)
         {
-            Player = args.EntityObject;
+            PlayerEntity = args.Entity;
             InitializeBehaviour();
         }
 

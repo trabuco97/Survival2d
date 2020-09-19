@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+
 
 using Survival2D.Systems.Item;
 using Survival2D.Systems.Item.Suit;
@@ -10,9 +12,10 @@ using Survival2D.Systems.Statistics.Status;
 
 namespace Survival2D.Systems.HealthArmor
 {
-    public class HealthArmorSystem : ISystemWithStatus
+    public class HealthArmorSystem : ISystemWithStatus, IDisposable
     {
         // fields
+        private EquipmentSystem equipment_system = null;
         private StatusSystem status_system = null;
         private SuitObject suit_equipped = null;
 
@@ -30,27 +33,21 @@ namespace Survival2D.Systems.HealthArmor
         public IncrementalStat ArmorRating { get; private set; } = new IncrementalStat(0f);
         public IncrementalStat Health { get; private set; } = new IncrementalStat(0f);
 
-        public HealthArmorSystem(StatusSystem status_system, EquipmentSystem equipment_system, float base_health)
+        public HealthArmorSystem(StatusSystem status_system, EquipmentSystem equipment_system, HealthArmorSystemData data = null)
         {
             this.status_system = status_system;
-            Health = new IncrementalStat(base_health);
+            this.equipment_system = equipment_system;
 
-            // Link the armor equip and unequip, save the current data and inicialize new armor data
-            EquipmentMethods handler = null;
-            handler = (args) =>
+            var health_base = 0f;
+
+            if (data != null)
             {
-                var last_suitObject = args.LastItemInSlot as SuitObject;
-                if (last_suitObject != null)
-                {
-                    last_suitObject.ActualRating = ArmorRating.NoCalculatedActualValue;
-                }
+                health_base = data.Health;
+            }
 
-                suit_equipped = args.Slot.ItemContained as SuitObject;
-                InitializeArmor();
-            };
+            Health = new IncrementalStat(health_base);
 
-
-            if (!equipment_system.TryAddMethodToEquipType(ItemType.Suit, handler))
+            if (!equipment_system.TryAddMethodToEquipType(ItemType.Suit, Handler_SuitEquipped))
             {
 #if UNITY_EDITOR
                 Debug.LogError("Error trying to get handlerlist at equipment sysyem at healtharmorsysytem");
@@ -101,18 +98,18 @@ namespace Survival2D.Systems.HealthArmor
 
         public void ModifyHealth(HealthModificationInfo modificationInfo)
         {
-            bool is_damaged = modificationInfo.health_delta_value < 0;
-            var delta_value = modificationInfo.health_delta_value;
+            bool is_damaged = modificationInfo.HealthDeltaValue < 0;
+            var delta_value = modificationInfo.HealthDeltaValue;
 
             if (is_damaged && ArmorRating.ActualValue > 0)
             {
                 delta_value = HealthSystemCalculator.GetDamageDealtReduction(delta_value, Armor.Value);
             }
 
-            Health.AddToTemporary(delta_value, modificationInfo.temporal_delta_type);
-            if (modificationInfo.status_applied != null)
+            Health.AddToTemporary(delta_value, modificationInfo.DeltaValueType);
+            if (modificationInfo.StatusApplied != null)
             {
-                foreach (var status_name in modificationInfo.status_applied)
+                foreach (var status_name in modificationInfo.StatusApplied)
                 {
                     status_system.AddStatus(status_name);
                 }
@@ -139,9 +136,25 @@ namespace Survival2D.Systems.HealthArmor
                 }
             }
         }
+        public void Dispose()
+        {
+            equipment_system.RemoveMethodFromEquipType(ItemType.Suit, Handler_SuitEquipped);
+        }
 
         public void RecoverArmor(float amount) { }
 
+
+        private void Handler_SuitEquipped(EquipmentSlotArgs args)
+        {
+            var last_suitObject = args.LastItemInSlot as SuitObject;
+            if (last_suitObject != null)
+            {
+                last_suitObject.ActualRating = ArmorRating.NoCalculatedActualValue;
+            }
+
+            suit_equipped = args.Slot.ItemContained as SuitObject;
+            InitializeArmor();
+        }
 
         // Pre:     suit_equipped != null
         // Post :   ArmorRating.Value != 0

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿#if UNITY_EDITOR
+using UnityEngine;
+#endif
 using Survival2D.Systems.HealthArmor;
 
 namespace Survival2D.Entities.AI.Consideration
@@ -15,9 +15,10 @@ namespace Survival2D.Entities.AI.Consideration
 
         public Appraisal Evaluate(AIGameContext context, AIDataNode data_node)
         {
+
             var health_system_behaviour = context.current_entity.GetComponentInChildren<HealthArmorSystemBehaviour>();
             var current_health = health_system_behaviour.HealthSystem.Health.ActualValue;
-            var total_health = health_system_behaviour.HealthSystem.Health.ActualValue;
+            var total_health = health_system_behaviour.HealthSystem.Health.Value;
 
             var input = current_health / total_health;
 

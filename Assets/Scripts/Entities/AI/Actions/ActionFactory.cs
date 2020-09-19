@@ -13,7 +13,7 @@ namespace Survival2D.Entities.AI
             switch (type)
             {
                 case ActionType.DEBUG1:
-                    output = new Debug1_Action(consideration_list, weight);
+                    output = new Debug1_Action(consideration_list, weight, type);
                     break;
 
             }

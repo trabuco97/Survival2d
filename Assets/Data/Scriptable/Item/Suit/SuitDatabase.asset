@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   draggable_data:
   - {fileID: 11400000, guid: 2d1d2127f24566149ac2b0acd7e1f0a2, type: 2}
-  - {fileID: 11400000, guid: 22e230e0b10b6164087b0c7fc6915a96, type: 2}
   item_type: 1

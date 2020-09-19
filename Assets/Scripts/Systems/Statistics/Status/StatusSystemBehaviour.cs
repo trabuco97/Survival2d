@@ -4,14 +4,13 @@ using UnityEngine;
 
 namespace Survival2D.Systems.Statistics.Status
 {
-    public class StatusSystemBehaviour : MonoBehaviour
+    public class StatusSystemBehaviour : MonoBehaviour, IOrderedBehaviour
     {
         [SerializeField] private SystemStatusHolderBehaviour system_status_holder = null;
 
         public StatusSystem StatusSystem { get; private set; } = null;
 
-        public event EventHandler OnSystemInitialized;
-
+        public int Order => 2;
 
         private void Awake()
         {
@@ -21,25 +20,11 @@ namespace Survival2D.Systems.Statistics.Status
                 Debug.LogWarning($"{nameof(system_status_holder)} is not assigned to {nameof(StatusSystemBehaviour)} of {name}");
             }
 #endif
-
-            // Inicialize the system
-            system_status_holder.OnSystemStatusInicialized += InicializeSystem;
         }
 
         private void Update()
         {
             StatusSystem.UpdateStatusDuration();
-        }
-
-        private void OnDestroy()
-        {
-            system_status_holder.OnSystemStatusInicialized -= InicializeSystem;
-        }
-
-        private void InicializeSystem(object e, EventArgs args)
-        {
-            StatusSystem = new StatusSystem(GetSystem);
-            OnSystemInitialized.Invoke(this, EventArgs.Empty);
         }
 
         // Used by the status system
@@ -56,6 +41,11 @@ namespace Survival2D.Systems.Statistics.Status
 #endif
                 return null;
             }
+        }
+
+        public void Initialize()
+        {
+            StatusSystem = new StatusSystem(GetSystem);
         }
     }
 }

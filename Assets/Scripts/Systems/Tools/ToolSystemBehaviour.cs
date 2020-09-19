@@ -41,12 +41,9 @@ namespace Survival2D.Systems.Tools
 
         public override SystemType SystemType => SystemType.Tool;
 
-        public override event EventHandler OnSystemInicialized;
-
         private void Start()
         {
             InicializedSystem();
-            OnSystemInicialized.Invoke(this, EventArgs.Empty);
         }
 
         public void ActivateWrapper(IToolItemObject tool_object)

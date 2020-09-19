@@ -19,7 +19,7 @@ namespace Survival2D.Systems.Item.Inventory
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.TryGetComponent(out ItemPickup pickup))
+            if (collision.TryGetComponent(out ItemPickupBehaviour pickup))
             {
                 inventory_linked.Inventory.AddItemToAvailable(pickup.ItemObject);
                 pickup.OnPickup();

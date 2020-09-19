@@ -11,7 +11,7 @@ namespace Survival2D.Cam
 
         protected override void InitializeBehaviour()
         {
-            player_camera.Follow = Player.transform;
+            player_camera.Follow = PlayerEntity.transform;
         }
     }
 }

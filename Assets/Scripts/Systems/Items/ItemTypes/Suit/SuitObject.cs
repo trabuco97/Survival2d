@@ -8,7 +8,7 @@ namespace Survival2D.Systems.Item.Suit
     [Serializable]
     public class SuitObject : ItemObject, IEquipableObjWithStatus
     {
-        private SuitData suit_data = null;
+        private Scriptable_SuitData suit_data = null;
         private float actual_rating = 0;
 
         public float ActualRating
@@ -30,13 +30,13 @@ namespace Survival2D.Systems.Item.Suit
                 }
             }
         }
-        public SuitData SuitData 
+        public Scriptable_SuitData SuitData 
         {
             get
             {
                 if (suit_data == null)
                 {
-                    suit_data = ItemData as SuitData;
+                    suit_data = ItemData as Scriptable_SuitData;
                 }
 
                 return suit_data;
@@ -51,7 +51,7 @@ namespace Survival2D.Systems.Item.Suit
         {
             base.Inicialize(type, id);
 
-            var suit_data = ItemData as SuitData;
+            var suit_data = ItemData as Scriptable_SuitData;
 
             if (suit_data != null)
             {

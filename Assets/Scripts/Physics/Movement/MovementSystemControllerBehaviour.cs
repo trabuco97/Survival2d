@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 using Survival2D.Systems.Statistics.Status;
 
 namespace Survival2D.Physics.Movement
 {
-    public class MovementSystemControllerBehaviour : ISystemBehaviourWithStatus
+    public class MovementSystemControllerBehaviour : ISystemBehaviourWithStatus, IOrderedBehaviour
     {
         #region Wrappers
         [Serializable]
@@ -27,7 +26,7 @@ namespace Survival2D.Physics.Movement
 
         public override SystemType SystemType => SystemType.Movement;
 
-        public override event EventHandler OnSystemInicialized;
+        public int Order => 1;
 
         private void Awake()
         {
@@ -49,14 +48,13 @@ namespace Survival2D.Physics.Movement
                 }
             }
 #endif
-            InicializeDatabase();
+            InitializeDatabase();
             DisableAllMovement();
             SetCurrentMovement(current_movement_atAwake);
         }
 
-        private void Start()
+        public void Initialize()
         {
-            OnSystemInicialized.Invoke(this, EventArgs.Empty);
         }
 
         public void SetCurrentMovement(MovementType type)
@@ -96,7 +94,7 @@ namespace Survival2D.Physics.Movement
             return null;
         }
 
-        private void InicializeDatabase()
+        private void InitializeDatabase()
         {
             foreach (var wrapper in movement_draggable_container)
             {
@@ -133,5 +131,8 @@ namespace Survival2D.Physics.Movement
 
             return linkage;
         }
+
+
+
     }
 }

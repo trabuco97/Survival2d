@@ -6,10 +6,14 @@ using Survival2D.Systems.Item.Inventory.Hotbar;
 
 namespace Survival2D.Systems.Tools
 {
-    public class ToolItemBuffer_FromHotbar : MonoBehaviour
+    public class ToolItemBuffer_FromHotbar : MonoBehaviour, IOrderedBehaviour
     {
         [SerializeField] private HotbarSystemBehaviour hotbar_behaviour = null;
         [SerializeField] private ToolSystemBehaviour tool_behaviour = null;
+
+        private bool is_initialized = false;
+
+        public int Order => 4;
 
         private void Awake()
         {
@@ -25,18 +29,19 @@ namespace Survival2D.Systems.Tools
             }
 #endif
 
-            hotbar_behaviour.OnHotbarInicialized += AddCallbacks;
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
-            hotbar_behaviour.OnHotbarInicialized -= AddCallbacks;
             hotbar_behaviour.Hotbar.OnHotbarSlotSelected -= HotbarCallbackToBuffer;
         }
 
-        private void AddCallbacks(object e, EventArgs args)
+        private void OnEnable()
         {
-            hotbar_behaviour.Hotbar.OnHotbarSlotSelected += HotbarCallbackToBuffer;
+            if (is_initialized)
+            {
+                hotbar_behaviour.Hotbar.OnHotbarSlotSelected += HotbarCallbackToBuffer;
+            }
         }
 
         private void HotbarCallbackToBuffer(InventoryEventArgs args)
@@ -48,6 +53,12 @@ namespace Survival2D.Systems.Tools
             {
                 tool_behaviour.ActivateWrapper(tool_object);
             }
+        }
+
+        public void Initialize()
+        {
+            hotbar_behaviour.Hotbar.OnHotbarSlotSelected += HotbarCallbackToBuffer;
+            is_initialized = true;
         }
     }
 }

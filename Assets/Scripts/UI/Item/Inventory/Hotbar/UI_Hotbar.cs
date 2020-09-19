@@ -22,13 +22,14 @@ namespace Survival2D.UI.Item.Inventory.Hotbar
         {
             base.OnDestroy();
 
-            Behaviour.OnHotbarInicialized -= InitializedHotbarCallback;
-            Behaviour.Hotbar.OnHotbarSpaceChanged -= CallbackUpdateSlotDisplay;
+            // Behaviour.OnHotbarInicialized -= InitializedHotbarCallback;
+            // Behaviour.Hotbar.OnHotbarSpaceChanged -= CallbackUpdateSlotDisplay;
         }
 
         protected override void InitializeBehaviour()
         {
-            Behaviour.OnHotbarInicialized += InitializedHotbarCallback;
+            InitializeDisplay();
+            Behaviour.Hotbar.OnHotbarSpaceChanged += CallbackUpdateSlotDisplay;
         }
 
         public void InitializeDisplay()
@@ -91,13 +92,6 @@ namespace Survival2D.UI.Item.Inventory.Hotbar
         private void CallbackUpdateSlotDisplay(object e, EventArgs args)
         {
             UpdateSlotDisplay();
-        }
-
-
-        private void InitializedHotbarCallback(object e, EventArgs args)
-        {
-            InitializeDisplay();
-            Behaviour.Hotbar.OnHotbarSpaceChanged += CallbackUpdateSlotDisplay;
         }
 
     }

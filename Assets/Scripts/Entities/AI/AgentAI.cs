@@ -19,7 +19,6 @@ namespace Survival2D.Entities.AI
         public ReadOnlyCollection<IAction> ActionsPerformed { get { return actions_to_perform.AsReadOnly(); } }
         public event AIMethods OnActionUpdate;
 
-
         public AgentAI(IAction[] actions_toPerform, ActionSelectionMode mode)
         {
             this.mode = mode;
@@ -53,6 +52,8 @@ namespace Survival2D.Entities.AI
                 foreach (var action in actions_to_perform)
                 {
                     float value = action.CalculateUtilityValue(context);
+                    OnActionUpdate?.Invoke(new AIEventArgs(action.Type, value));
+
                     if (value > highest_score)
                     {
                         highest_score = value;
@@ -70,6 +71,8 @@ namespace Survival2D.Entities.AI
                 foreach (var action in actions_to_perform)
                 {
                     float value = action.CalculateUtilityValue(context);
+                    OnActionUpdate?.Invoke(new AIEventArgs(action.Type, value));
+
                     for (int i = 0; i < ARBRITARY_VALUE_TODETERMINEHOWMANYACTIONS_TOTAKE; i++)
                     {
                         if (value > highest_score_array[i])

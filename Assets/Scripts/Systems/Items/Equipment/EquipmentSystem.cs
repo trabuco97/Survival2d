@@ -78,6 +78,14 @@ namespace Survival2D.Systems.Item.Equipment
             return false;
         }
 
+        public void RemoveMethodFromEquipType(ItemType type, EquipmentMethods method)
+        {
+            if (onEquipableReplacedEvents.TryGetValue(type, out var methods_list))
+            {
+                methods_list.Remove(method);
+            }
+        }
+
         public EquipmentGroupType GetGroup(ItemType type)
         {
             if (equipment_groups.TryGetValue(type, out EquipmentGroupType group_type))

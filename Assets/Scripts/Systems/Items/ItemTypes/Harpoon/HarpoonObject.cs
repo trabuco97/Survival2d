@@ -7,15 +7,15 @@ namespace Survival2D.Systems.Item.Harpoon
 {
     public class HarpoonObject : ItemObject, IToolItemObject
     {
-        private HarpoonData harpoon_data = null;
+        private Scriptable_HarpoonData harpoon_data = null;
 
-        public HarpoonData HarpoonData 
+        public Scriptable_HarpoonData HarpoonData 
         { 
             get
             {
                 if (harpoon_data == null)
                 {
-                    harpoon_data = ItemData as HarpoonData;
+                    harpoon_data = ItemData as Scriptable_HarpoonData;
                 }
 
                 return harpoon_data;

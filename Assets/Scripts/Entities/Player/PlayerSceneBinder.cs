@@ -11,9 +11,9 @@ namespace Survival2D.Entities.Player
 
         public event EntityMethods OnPlayerBinded;
 
-        public void BindPlayerToScene(GameObject player)
+        public void BindPlayerToScene(EntityBehaviour player)
         {
-            player_binded = player;
+            player_binded = player.gameObject;
             if (HasPlayerBinded)
             {
                 OnPlayerBinded?.Invoke(new EntityEventArgs(player));

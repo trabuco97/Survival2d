@@ -35,9 +35,9 @@ namespace Survival2D.UI.Status
         {
             base.OnDestroy();
 
-            Behaviour.StatusSystem.OnNewStatusAdded -= AddNewStatus;
-            Behaviour.StatusSystem.OnStatusUpdated -= UpdateSpecificStatus;
-            Behaviour.StatusSystem.OnStatusRemoved -= RemoveSpecificStatus;
+            // Behaviour.StatusSystem.OnNewStatusAdded -= AddNewStatus;
+            // Behaviour.StatusSystem.OnStatusUpdated -= UpdateSpecificStatus;
+            // Behaviour.StatusSystem.OnStatusRemoved -= RemoveSpecificStatus;
 
         }
 
@@ -67,20 +67,11 @@ namespace Survival2D.UI.Status
         // Add callbacks to status system
         protected override void InitializeBehaviour()
         {
-            EventHandler handler = null;
-            handler = delegate
-            {
-                var status_system = Behaviour.StatusSystem;
+            var status_system = Behaviour.StatusSystem;
 
-                status_system.OnNewStatusAdded += AddNewStatus;
-                status_system.OnStatusUpdated += UpdateSpecificStatus;
-                status_system.OnStatusRemoved += RemoveSpecificStatus;
-
-
-                Behaviour.OnSystemInitialized -= handler;
-            };
-
-            Behaviour.OnSystemInitialized += handler;
+            status_system.OnNewStatusAdded += AddNewStatus;
+            status_system.OnStatusUpdated += UpdateSpecificStatus;
+            status_system.OnStatusRemoved += RemoveSpecificStatus;
         }
     }
 }

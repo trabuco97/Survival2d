@@ -20,7 +20,7 @@ namespace Survival2D
         public PlayerGameplayInput inputActions;
 
         public HealthArmorSystemBehaviour healthArmorSystem;
-        public ItemPickGeneratorBehaviour generator;
+        public ItemPickupGeneratorBehaviour generator;
 
         private void Awake()
         {

@@ -1,0 +1,17 @@
+{
+    "name": "DEBUG",
+    "references": [
+        "GUID:42544a48c0f22dc4b9d1fcbbff1f22ed"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -6,17 +6,19 @@ namespace Survival2D.Entities.Player
     /// <summary>
     /// TODO : something something
     /// </summary>
-    public class PlayerSpawner : MonoBehaviour
+    public class PlayerSpawner : IEntitySpawner
     {
         [SerializeField] private GameObject player_prefab = null;
-        [SerializeField] private int max_players = 1;
+        [SerializeField] private uint max_players = 1;
 
         [SerializeField] private Transform player_default_spawn = null;
 
-        private List<GameObject> player_tracker_container = new List<GameObject>(); 
+        private uint current_players = 0;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
 #if UNITY_EDITOR
             if (player_prefab == null)
             {
@@ -30,16 +32,16 @@ namespace Survival2D.Entities.Player
             }
         }
 
-        public GameObject SpawnPlayer(Transform transform = null)
+        protected override GameObject GetEntitySpawner()
         {
-            if (player_tracker_container.Count >= max_players) return null;
+            if (current_players >= max_players) return null;
 
             if (transform == null)
             {
-                transform = player_default_spawn;
+                player_default_spawn = this.transform;
             }
 
-            var instance = Instantiate(player_prefab, transform.position, Quaternion.identity);
+            var instance = Instantiate(player_prefab, player_default_spawn.position, Quaternion.identity);
             var player = instance.GetComponent<EntityBehaviour>();
             if (player != null)
             {
@@ -47,7 +49,7 @@ namespace Survival2D.Entities.Player
 
                 handler = (args) =>
                 {
-                    CallbackDestroyPlayer(args);
+                    current_players--;
                     player.OnDespawn -= handler;
                 };
 
@@ -60,14 +62,8 @@ namespace Survival2D.Entities.Player
             }
 #endif
 
+            current_players++;
             return instance;
         }
-
-
-        private void CallbackDestroyPlayer(EntityEventArgs args)
-        {
-            player_tracker_container.Remove(args.EntityObject);
-        }
-
     }
 }

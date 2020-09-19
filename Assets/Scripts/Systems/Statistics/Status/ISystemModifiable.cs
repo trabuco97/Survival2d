@@ -15,7 +15,6 @@ namespace Survival2D.Systems.Statistics.Status
 
     public interface ISystemWithStatusBehaviour : ISystemBehaviour
     {
-        event EventHandler OnSystemInicialized;
         ISystemWithStatus System { get; }
     }
 
@@ -23,8 +22,6 @@ namespace Survival2D.Systems.Statistics.Status
     {
         public ISystemWithStatus System => this;
         public abstract SystemType SystemType { get; }
-
-        public abstract event EventHandler OnSystemInicialized;
 
         public abstract StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
         public abstract StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
