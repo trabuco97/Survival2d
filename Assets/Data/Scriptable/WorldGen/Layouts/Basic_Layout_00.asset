@@ -1,0 +1,252 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9194980916130693863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e93d88c278bbb44bd81cd3c69e806e, type: 3}
+  m_Name: r_end
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 88, y: -168}
+  ports:
+    keys:
+    - LeftChild
+    - RightChild
+    - UpChild
+    - DownChild
+    - ChildOf
+    values:
+    - _fieldName: LeftChild
+      _node: {fileID: -9194980916130693863}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: RightChild
+      _node: {fileID: -9194980916130693863}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: UpChild
+      _node: {fileID: -9194980916130693863}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: DownChild
+      _node: {fileID: -9194980916130693863}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: ChildOf
+      _node: {fileID: -9194980916130693863}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: RightChild
+        node: {fileID: -8822168302795672603}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  is_root: 0
+  tag: 4
+  LeftChild: {fileID: 0}
+  RightChild: {fileID: 0}
+  UpChild: {fileID: 0}
+  DownChild: {fileID: 0}
+  ChildOf: {fileID: 0}
+--- !u!114 &-8822168302795672603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e93d88c278bbb44bd81cd3c69e806e, type: 3}
+  m_Name: root
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -168, y: -168}
+  ports:
+    keys:
+    - LeftChild
+    - RightChild
+    - UpChild
+    - DownChild
+    - ChildOf
+    values:
+    - _fieldName: LeftChild
+      _node: {fileID: -8822168302795672603}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ChildOf
+        node: {fileID: -6717397984693151707}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: RightChild
+      _node: {fileID: -8822168302795672603}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ChildOf
+        node: {fileID: -9194980916130693863}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: UpChild
+      _node: {fileID: -8822168302795672603}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: DownChild
+      _node: {fileID: -8822168302795672603}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: ChildOf
+      _node: {fileID: -8822168302795672603}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  is_root: 1
+  tag: 1
+  LeftChild: {fileID: -6717397984693151707}
+  RightChild: {fileID: -9194980916130693863}
+  UpChild: {fileID: 0}
+  DownChild: {fileID: 0}
+  ChildOf: {fileID: 0}
+--- !u!114 &-6717397984693151707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e93d88c278bbb44bd81cd3c69e806e, type: 3}
+  m_Name: Asset_Subspace Layout
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -472, y: -168}
+  ports:
+    keys:
+    - LeftChild
+    - RightChild
+    - UpChild
+    - DownChild
+    - ChildOf
+    values:
+    - _fieldName: LeftChild
+      _node: {fileID: -6717397984693151707}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: RightChild
+      _node: {fileID: -6717397984693151707}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: UpChild
+      _node: {fileID: -6717397984693151707}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: DownChild
+      _node: {fileID: -6717397984693151707}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: ChildOf
+      _node: {fileID: -6717397984693151707}
+      _typeQualifiedName: Survival2D.WorldGeneration.Asset_SubspaceLayoutNode, Core,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: LeftChild
+        node: {fileID: -8822168302795672603}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  is_root: 0
+  tag: 3
+  LeftChild: {fileID: 0}
+  RightChild: {fileID: 0}
+  UpChild: {fileID: 0}
+  DownChild: {fileID: 0}
+  ChildOf: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5dbf3fb19e4519499aa769b647f17e2, type: 3}
+  m_Name: Basic_Layout_00
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -8822168302795672603}
+  - {fileID: -9194980916130693863}
+  - {fileID: -6717397984693151707}

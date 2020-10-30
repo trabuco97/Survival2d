@@ -36,7 +36,7 @@ namespace Survival2D.Systems.Statistics.Status
             foreach (var system_behaviour in system_behaviour_container)
             {
                 var type = system_behaviour.SystemType;
-                if (type != SystemType.None)
+                if (type != SystemType.MAX_SYSTEMS)
                 {
                     systemWithStatus_database.Add(type, system_behaviour.System);
                 }

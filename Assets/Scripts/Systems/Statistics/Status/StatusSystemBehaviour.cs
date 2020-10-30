@@ -24,7 +24,7 @@ namespace Survival2D.Systems.Statistics.Status
 
         private void Update()
         {
-            StatusSystem.UpdateStatusDuration();
+            StatusSystem.UpdateStatusDuration(Time.deltaTime);
         }
 
         // Used by the status system

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Survival2D.SceneManagement
 {
+    /// <summary>
+    /// Assets that holds all gamescenes assets
+    /// 
+    /// </summary>
     [CreateAssetMenu(fileName = "GameSceneDatabase", menuName = "Custom/Scene/Database")]
     public class Scriptable_GameSceneDatabase : ScriptableObject, ISerializationCallbackReceiver
     {
@@ -75,7 +79,11 @@ namespace Survival2D.SceneManagement
             IsInitialized = false;
         }
 
-        // Without _root prefix
+        /// <summary>
+        /// Finds the current gamescene asset info based on the field "current_scene_name"
+        /// across this database
+        /// </summary>
+        /// <returns>The gamescene assets that its name matches with the field "current_scene_name" </returns>
         private Scriptable_IGameScene FindCurrentScene()
         {
             if (GameplaySceneDatabase.TryGetValue(current_scene_name, out var gameplayScene))
@@ -90,9 +98,10 @@ namespace Survival2D.SceneManagement
                         return menuScene;
                 }
             }
-
+#if UNITY_EDITOR
+            Debug.LogError("Error trying to found scenedata asset in database. Not in the database or <current_scene_name> is invalid");
+#endif
             return null;
-
         }
     }
 }

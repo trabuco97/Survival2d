@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status_name: DEBUG_HealthDecrease
   modifiers_data:
-  - type: 1
-    stat_layerMask: 1
+  - type: 0
+    defaultStat: 0
+    healthArmorStat: 0
+    movementStat: 0
     modifier:
       value: -20
       type: 0

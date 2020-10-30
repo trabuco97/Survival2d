@@ -5,7 +5,7 @@ using Survival2D.Systems.Statistics.Status;
 
 namespace Survival2D.Physics.Movement
 {
-    public abstract class IMovementSystem : MonoBehaviour, ISystemWithStatus 
+    public abstract class IMovementSystem : MonoBehaviour 
     {
         [SerializeField] protected Rigidbody2D rgb2 = null;
 
@@ -20,6 +20,7 @@ namespace Survival2D.Physics.Movement
             }
         }
 
+        public SystemStatsCollection Stats { protected get; set; }
         public abstract bool HasMovementSpecificRestrictions { set; }
 
 
@@ -32,8 +33,5 @@ namespace Survival2D.Physics.Movement
             }
 #endif
         }
-
-        public abstract StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
-        public abstract StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
     }
 }

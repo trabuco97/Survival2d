@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdc589667ffac394e9cd68ea6d1482ae, type: 3}
+  m_Name: ExampleGameSceneDatabase
+  m_EditorClassIdentifier: 
+  gameplayScene_draggable:
+  - {fileID: 11400000, guid: 119caf12dda9c3b4d96c0cf7dbe6f52d, type: 2}
+  menuScene_draggable:
+  - {fileID: 11400000, guid: 3ae18e7103b56014e811e6d83cf47e72, type: 2}

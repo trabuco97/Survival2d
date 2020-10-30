@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 
 using Survival2D.Systems.HealthArmor;
+using Survival2D.Systems.Statistics;
 
 namespace Survival2D.UI.HealthArmor
 {
@@ -52,8 +53,8 @@ namespace Survival2D.UI.HealthArmor
             health_system.OnHealthModified += CallbackHealthModified;
             health_system.OnZeroHealth += CallbackHealthModified;
 
-
-            SetHealthDisplay(health_system.Health.ActualValue, health_system.Health.Value);
+            var health_stat = health_system.Stats[(int)HealthArmorStats.Health] as IncrementalStat;
+            SetHealthDisplay(health_stat.ActualValue, health_stat.Value);
         }
 
         private void TerminateCallbacks(HealthArmorSystem health_system)

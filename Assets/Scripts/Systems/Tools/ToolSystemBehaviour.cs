@@ -40,6 +40,7 @@ namespace Survival2D.Systems.Tools
 
 
         public override SystemType SystemType => SystemType.Tool;
+        public override SystemStatsCollection Stats => throw new NotImplementedException();
 
         private void Start()
         {
@@ -89,17 +90,6 @@ namespace Survival2D.Systems.Tools
                     }
                 }
             }
-        }
-
-        public override StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data)
-        {
-            // TODO: 
-            return null;
-        }
-
-        public override StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data)
-        {
-            return null;
         }
     }
 }

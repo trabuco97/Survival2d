@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Survival2D.Systems.Statistics;
 using Survival2D.Systems.Statistics.Status;
 
 namespace Survival2D.Physics.Movement
@@ -18,20 +19,31 @@ namespace Survival2D.Physics.Movement
 
         }
         #endregion
+        [Header("No Swim Stats")]
+        [SerializeField] private float horizontal_grounded_speed_value = 0f;
+        [SerializeField] private float horizontal_grounded_acceleration_value = 0f;
+        [SerializeField] private float swim_speed_value = 0f;
+        [SerializeField] private float horizontal_swim_acceleration_value = 0f;
+        [SerializeField] private float jump_potency_value = 0f;
+
+        [Header("References")]
         [SerializeField] private MovementSystemWrapper[] movement_draggable_container = null;
         [SerializeField] private MovementType current_movement_atAwake = MovementType.No_Swimmable;
 
         private Dictionary<MovementType, MovementSystemWrapper> movement_database = new Dictionary<MovementType, MovementSystemWrapper>();
         private IMovementSystem current_movement = null;
 
-        public override SystemType SystemType => SystemType.Movement;
+        private SystemStatsCollection stats;
 
+        public override SystemType SystemType => SystemType.Movement;
         public int Order => 1;
+        public override SystemStatsCollection Stats => stats;
 
         private void Awake()
         {
 #if UNITY_EDITOR
-            // check if the types are correct
+            // check if the types are correct               
+
             foreach (var wrapper in movement_draggable_container)
             {
                 bool is_matching_types = true;
@@ -48,6 +60,17 @@ namespace Survival2D.Physics.Movement
                 }
             }
 #endif
+            var stats_array = new Stat[]
+            {
+                new Stat(horizontal_grounded_speed_value),
+                new Stat(horizontal_grounded_acceleration_value),
+                new Stat(swim_speed_value),
+                new Stat(horizontal_swim_acceleration_value),
+                new Stat(jump_potency_value),
+            };
+
+            stats = new SystemStatsCollection(stats_array);
+            
             InitializeDatabase();
             DisableAllMovement();
             SetCurrentMovement(current_movement_atAwake);
@@ -98,6 +121,7 @@ namespace Survival2D.Physics.Movement
         {
             foreach (var wrapper in movement_draggable_container)
             {
+                wrapper.movement_system.Stats = stats;
                 movement_database.Add(wrapper.type, wrapper);
             }
         }
@@ -110,29 +134,5 @@ namespace Survival2D.Physics.Movement
                 wrapper.handler.ActiveState = false;
             }
         }
-
-        public override StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data)
-        {
-            return null;
-        }
-
-        public override StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data)
-        {
-            var linkage = new StatusLinkageToStat();
-            linkage.modifier = statModifier_data.modifier;
-
-
-            // This assumes that each wrapper has a different movement type
-            foreach (var wrapper in movement_database.Values)
-            {
-                 var movement_linkage = wrapper.movement_system.LinkModifierToStat(statModifier_data);
-                linkage.stats_linked.AddRange(movement_linkage.stats_linked);
-            }
-
-            return linkage;
-        }
-
-
-
     }
 }

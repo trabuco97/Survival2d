@@ -6,7 +6,8 @@ namespace Survival2D.SceneManagement
     public enum MenuType
     {
         MainMenu    = 0,
-        PauseMenu   = 1
+        PauseMenu   = 1,
+        Example001  = 999
     }
 
     [CreateAssetMenu(fileName = "MenuScene", menuName = "Custom/Scene/Menu")]

@@ -8,14 +8,14 @@ namespace Survival2D.Systems.Statistics.Status
     public class StatusLinkageToStat
     {
         public StatModifier modifier;
-        public List<Stat> stats_linked = new List<Stat>();
-        public List<OnModifierRemovedMethod> removal_methods = new List<OnModifierRemovedMethod>();
+        public Stat stat_linked;
+        public List<Action> removal_methods;
     }
 
     public class StatusLinkageToIncrementalStat
     {
         public IncrementalStatModifier modifier;
-        public List<IncrementalStat> stats_linked;
-        public List<OnModifierRemovedMethod> removal_methods = new List<OnModifierRemovedMethod>();
+        public IncrementalStat stat_linked;
+        public List<Action> removal_methods;
     }
 }

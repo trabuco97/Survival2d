@@ -23,6 +23,7 @@ namespace Survival2D.Systems.Tools.Harpoon
         private HarpoonState state = HarpoonState.None;
 
         public bool IsInicialized { get; private set; } = false;
+        public SystemStatsCollection Stats => throw new System.NotImplementedException();
 
         private void Awake()
         {

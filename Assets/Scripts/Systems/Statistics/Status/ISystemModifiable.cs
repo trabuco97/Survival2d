@@ -9,8 +9,8 @@ namespace Survival2D.Systems.Statistics.Status
     /// </summary>
     public interface ISystemWithStatus
     {
-        StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
-        StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
+        SystemStatsCollection Stats { get; }
+
     }
 
     public interface ISystemWithStatusBehaviour : ISystemBehaviour
@@ -22,8 +22,6 @@ namespace Survival2D.Systems.Statistics.Status
     {
         public ISystemWithStatus System => this;
         public abstract SystemType SystemType { get; }
-
-        public abstract StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data);
-        public abstract StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data);
+        public abstract SystemStatsCollection Stats { get; }
     }
 }        

@@ -39,9 +39,8 @@ namespace Survival2D.Systems.Statistics.Status
 
                         if (system != null)
                         {
-                            StatusLinkageToStat linkage = system.LinkModifierToStat(modifier_data);
+                            StatusLinkageToStat linkage = system.Stats.AddModifier(modifier_data);
                             status_object.linkage_container.Add(linkage);
-
                         }
 #if UNITY_EDITOR
                         else
@@ -57,7 +56,7 @@ namespace Survival2D.Systems.Statistics.Status
 
                         if (system != null)
                         {
-                            StatusLinkageToIncrementalStat incremental_linkage = system.LinkIncrementalModifierToStat(incremental_modifier_data);
+                            StatusLinkageToIncrementalStat incremental_linkage = system.Stats.AddIncrementalModifier(incremental_modifier_data);
                             status_object.incremental_linkage_container.Add(incremental_linkage);
 
                         }
@@ -99,12 +98,12 @@ namespace Survival2D.Systems.Statistics.Status
             return false;
         }
 
-        public void UpdateStatusDuration()
+        public void UpdateStatusDuration(float delta_time)
         {
             for (int i = status_applied_container.Count - 1; i >= 0; i--)
             {
                 var status_object = status_applied_container[i];
-                status_object.actual_status_duration -= Time.deltaTime;
+                status_object.actual_status_duration -= delta_time;
 
                 if (status_object.status_data.has_duration && status_object.actual_status_duration <= 0)
                 {
@@ -149,11 +148,7 @@ namespace Survival2D.Systems.Statistics.Status
             {
                 foreach (var linkage in status_object.linkage_container)
                 {
-                    foreach (var stat in linkage.stats_linked)
-                    {
-                        stat.RemoveModifier(linkage.modifier);
-                    }
-
+                    linkage.stat_linked.RemoveModifier(linkage.modifier);
                     foreach (var method in linkage.removal_methods)
                     {
                         method();
@@ -166,11 +161,8 @@ namespace Survival2D.Systems.Statistics.Status
             {
                 foreach (var incremental_linkage in status_object.incremental_linkage_container)
                 {
-                    foreach (var incremental_stat in incremental_linkage.stats_linked)
-                    {
-                        incremental_stat.RemoveIncrementalModifier(incremental_linkage.modifier);
-                    }
 
+                    incremental_linkage.stat_linked.RemoveIncrementalModifier(incremental_linkage.modifier);
                     foreach (var method in incremental_linkage.removal_methods)
                     {
                         method();

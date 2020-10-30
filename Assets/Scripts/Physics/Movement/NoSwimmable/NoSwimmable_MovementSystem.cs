@@ -1,30 +1,20 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 using Survival2D.Systems.Statistics;
-using Survival2D.Systems.Statistics.Status;
 
 namespace Survival2D.Physics.Movement.NoSwimmable
 {
-    [Serializable]
     public class NoSwimmable_MovementSystem : IMovementSystem
     {
         [Header("References")]
         [SerializeField] private GroundDetection ground_detector = null;
 
         [Header("No Swim Stats")]
-        [SerializeField] private float horizontal_grounded_speed_value = 0f;
-        [SerializeField] private float horizontal_grounded_acceleration_value = 0f;
-        [SerializeField] private float swim_speed_value = 0f;
-        [SerializeField] private float horizontal_swim_acceleration_value = 0f;
-        [SerializeField] private float jump_potency_value = 0f;
-
         [SerializeField] private float min_jump_angle = 70f;
 
         [SerializeField] private bool awake_ground_restricted = true;
         [SerializeField] private bool awake_swim_restricted = true;
 
-        public NoSwimmable_MovementStats stats;
 
         public bool IsGroundRestricted { get; private set; } = true;
         public bool IsSwimRestricted { get; private set; } = true;
@@ -50,13 +40,6 @@ namespace Survival2D.Physics.Movement.NoSwimmable
                 Debug.LogWarning($"{nameof(ground_detector)} is not assigned to {nameof(NoSwimmable_MovementSystem)} of {gameObject.GetFullName()}");
             }
 #endif
-            stats = new NoSwimmable_MovementStats();
-            stats.horizontal_grounded_speed = new Stat(horizontal_grounded_speed_value);
-            stats.horizontal_grounded_acceleration = new Stat(horizontal_grounded_acceleration_value);
-            stats.swim_speed = new Stat(swim_speed_value);
-            stats.horizontal_swim_acceleration = new Stat(horizontal_swim_acceleration_value);
-            stats.jump_potency = new Stat(jump_potency_value);
-
             IsGroundRestricted = awake_ground_restricted;
             IsSwimRestricted = awake_swim_restricted;
         }
@@ -65,47 +48,6 @@ namespace Survival2D.Physics.Movement.NoSwimmable
         private void Update()
         {
             rgb2.velocity = CheckForVelocityConstraints(rgb2.velocity);
-        }
-
-        public override StatusLinkageToIncrementalStat LinkIncrementalModifierToStat(IncrementalStatModifierData statModifier_data)
-        {
-            return null;
-        }
-
-        public override StatusLinkageToStat LinkModifierToStat(StatModifierData statModifier_data)
-        {
-            var linkage = new StatusLinkageToStat();
-            linkage.modifier = statModifier_data.modifier;
-
-            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat0))
-            {
-                stats.horizontal_grounded_acceleration.AddModifier(statModifier_data.modifier);
-                stats.horizontal_grounded_speed.AddModifier(statModifier_data.modifier);
-
-                linkage.stats_linked.Add(stats.horizontal_grounded_acceleration);
-                linkage.stats_linked.Add(stats.horizontal_grounded_speed);
-
-            }
-
-
-            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat1))
-            {
-                stats.swim_speed.AddModifier(statModifier_data.modifier);
-                stats.horizontal_swim_acceleration.AddModifier(statModifier_data.modifier);
-
-                linkage.stats_linked.Add(stats.swim_speed);
-                linkage.stats_linked.Add(stats.horizontal_swim_acceleration);
-            }
-
-            if (statModifier_data.stat_layerMask.HasFlag(StatModified.Stat2))
-            {
-                stats.jump_potency.AddModifier(statModifier_data.modifier);
-
-                linkage.stats_linked.Add(stats.jump_potency);
-            }
-
-
-            return linkage;
         }
 
         public void Jump()
@@ -118,7 +60,7 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             {
                 jump_vector.x *= -1;
             }
-            jump_vector *= stats.jump_potency.Value;
+            jump_vector *= Stats[(int)MovementStats.Jump].Value;
             rgb2.AddForce(jump_vector, ForceMode2D.Impulse);
         }
 
@@ -128,11 +70,11 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             var delta_toAdd = new Vector2(0, 0);
             if (ground_detector.IsGrounded)
             {
-                delta_toAdd.x = value * stats.horizontal_grounded_acceleration.Value;
+                delta_toAdd.x = value * Stats[(int)MovementStats.H_G_Acceleration].Value;
             }
             else
             {
-                delta_toAdd.x = value * stats.horizontal_swim_acceleration.Value;
+                delta_toAdd.x = value * Stats[(int)MovementStats.H_S_Acceleration].Value;
             }
 
             velocity += delta_toAdd;
@@ -145,7 +87,7 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             {
                 if (IsGroundRestricted)
                 {
-                    var horizontal_grounded_limit = stats.horizontal_grounded_speed.Value;
+                    var horizontal_grounded_limit = Stats[(int)MovementStats.H_G_Speed].Value;
                     if (Mathf.Abs(velocity.x) > horizontal_grounded_limit)
                     {
                         var new_velocity_x = horizontal_grounded_limit;
@@ -160,7 +102,7 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             }
             else if (IsSwimRestricted)
             {
-                var swim_limit = stats.swim_speed.Value;
+                var swim_limit = Stats[(int)MovementStats.S_Speed].Value;
                 if (velocity.magnitude > swim_limit)
                 {
                     var new_velocity_magnitude = Mathf.Lerp(swim_limit, velocity.magnitude, 0.5f);
@@ -181,7 +123,7 @@ namespace Survival2D.Physics.Movement.NoSwimmable
             // between the jump straight up to the min angle
             var horizontal_velocity = Mathf.Abs(rgb2.velocity.x);
 
-            var value = Mathf.Lerp(90f, min_jump_angle, horizontal_velocity / stats.horizontal_grounded_speed.Value);
+            var value = Mathf.Lerp(90f, min_jump_angle, horizontal_velocity / Stats[(int)MovementStats.H_G_Speed].Value);
             return value;
         }
 
